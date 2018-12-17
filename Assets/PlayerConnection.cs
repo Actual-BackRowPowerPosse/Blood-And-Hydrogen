@@ -1,0 +1,150 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+
+public class PlayerConnection : NetworkBehaviour {
+
+    public GameObject PlayerObjPrefab;
+    public GameObject camRef;
+
+    public GameObject PlayerShipObj;
+
+    [SyncVar]
+    public short playerShipCount = 0;
+
+
+	// Use this for initialization
+	void Start () {
+
+        if (isLocalPlayer)
+        {
+            CmdSpawnMyShip();
+
+
+            //Debug.Log("Spawning ship: " + PlayerShipObj);
+            // Set camera to look at ship
+            //LinkCameraToObj(PlayerShipObj);
+
+
+
+
+        }
+		
+	}
+
+    public void LinkCameraToObj( GameObject obj)
+    {
+        if (isLocalPlayer)
+        {
+            camRef = GameObject.Find("MainCamera");
+            camRef.GetComponent<CameraMovement>().lookAtObject(obj); // set camera to look at argument object
+        }
+    }
+	
+	// Update is called once per frame
+	void Update () {
+
+        if (isLocalPlayer)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                string n = "PlayerConnection (" + Random.Range(0, 100) + ")";
+                CmdChangePlayerShipName(n);
+            }
+            
+
+            
+        }
+		
+	}
+
+    /////////////////////////////////////////////  COMMANDS
+    //  Initiated by a client, executed on Server side
+    [Command]
+    void CmdSpawnMyShip()
+    {
+
+        Debug.Log("Incrementing shipcount");
+        playerShipCount++; // only the server will record how many playerShips it has spawned
+
+        Debug.Log("Entering CmdSpawnMyShip()");
+
+        // create on server-side
+        GameObject go = Instantiate(PlayerObjPrefab);
+
+        //go.gameObject.name = "bob";
+
+
+        PlayerShipObj = go;
+        
+
+        Debug.Log("Go object: " + go);
+        Debug.Log("PlayerShipObj: " + PlayerShipObj);
+
+
+        // propagate to all clients, set initiating client to have authority to modify 'go' object
+        NetworkServer.SpawnWithClientAuthority(go, connectionToClient);
+
+        
+
+        //uint id = go.GetComponent<NetworkIdentity>().netId.Value;
+
+
+        // this function executes on this networked object (by networkID) on EVERY client
+        // Sets this object's internal playerShipObject reference to look at owned ship -- ship will look at "parent", too
+        //RpcUpdateReferences(playerShipCount); // pass in NETWORKID of the player's ship
+    }
+
+    
+
+    [Command]
+    void CmdChangePlayerShipName(string n)
+    {
+        gameObject.name = n;
+        RpcUpdateName(n);
+    }
+
+    //////////////////////////////////////////////////////  RPC's
+    //  Initiated by server, all clients will execute on THIS networked object (by networkID) instance
+
+    [ClientRpc]
+    void RpcUpdateName(string n)
+    {
+        gameObject.name = n;
+    }
+
+    [ClientRpc]
+    void RpcUpdateReferences(short shipCount)
+    {
+
+        //Debug.Log("looking for playership");
+
+        //GameObject[] search = GameObject.FindGameObjectsWithTag("PlayerShip(Clone)"); // create array of all spawned ships
+
+        //for(int i = 0; i < search.Length; i++) // loop through all ships
+        //{
+
+        //    NetworkBehaviour obj = search[i].GetComponent<ShipMovement>();  // create ref to look at script
+
+        //    if (obj.hasAuthority) // if the ship object has authority
+        //        PlayerShipObj = search[i];  // set this class object's reference
+        //}
+
+        //PlayerShipObj.name = "PlayerShip (" + shipCount + ")";
+
+        //Debug.Log("PlayerShipObj = " + PlayerShipObj);
+        
+        
+
+        //if (isLocalPlayer)
+        //{
+        //    LinkCameraToObj(PlayerShipObj);
+        //}
+        
+    }
+
+    
+
+
+}
