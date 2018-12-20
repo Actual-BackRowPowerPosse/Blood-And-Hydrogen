@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212104242777731012}
   - component: {fileID: 114181250385981120}
   - component: {fileID: 114029147586212534}
+  - component: {fileID: 114775524746253384}
   - component: {fileID: 114929821713305770}
   - component: {fileID: 50197837921764432}
   - component: {fileID: 60089451687362542}
@@ -116,9 +117,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thrust: 1
-  torque: 2
+  torque: 1
   topSpeed: 5
-  maxAngularVel: 20
+  maxAngularVel: 30
   RAM_POWER: 100
   ownerObjRef: {fileID: 0}
 --- !u!114 &114181250385981120
@@ -153,6 +154,18 @@ MonoBehaviour:
     i15: 180
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
+--- !u!114 &114775524746253384
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1152183659351184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72935e25d5ec31847a5258dac2904392, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletRef: {fileID: 1426713088251006, guid: 00b401bdb8f2f9e4eb3fb5da58910d63, type: 2}
 --- !u!114 &114929821713305770
 MonoBehaviour:
   m_ObjectHideFlags: 1

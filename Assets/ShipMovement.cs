@@ -48,13 +48,6 @@ public class ShipMovement : NetworkBehaviour {
                 rb.AddForce(-dir * thrust);
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))    //  ----------  BOOST
-            {
-                angle = rb.rotation;
-                Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                rb.AddForce(dir * RAM_POWER);
-            }
-
             if (Input.GetKey(KeyCode.A))        //  ----------  TURN LEFT
             {
                 if (rb.angularVelocity < maxAngularVel)

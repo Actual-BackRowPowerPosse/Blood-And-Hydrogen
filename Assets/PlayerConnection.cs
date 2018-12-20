@@ -83,7 +83,7 @@ public class PlayerConnection : NetworkBehaviour {
         Debug.Log("PlayerShipObj: " + PlayerShipObj);
 
 
-        // propagate to all clients, set initiating client to have authority to modify 'go' object
+        // propagate to all clients, set initiating client's COMPUTER to have authority to modify 'go' object
         NetworkServer.SpawnWithClientAuthority(go, connectionToClient);
 
         
