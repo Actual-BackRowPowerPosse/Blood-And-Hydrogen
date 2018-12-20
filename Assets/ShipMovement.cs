@@ -5,13 +5,15 @@ using UnityEngine.Networking;
 
 public class ShipMovement : NetworkBehaviour {
 
+
+    public float enginesHP = 1.0f; // % decimal, 0-1 (aka .66 is 66% engine hp)
     public float thrust = 1.5f;
     public float torque = 10f;
     public float topSpeed = 10f;
     public float maxAngularVel = 10f;
     public float RAM_POWER = 10f;
 
-    public GameObject ownerObjRef;
+    private GameObject ownerObjRef;
 
     private GameObject camRef;
 
@@ -38,7 +40,7 @@ public class ShipMovement : NetworkBehaviour {
             {
                 angle = rb.rotation;
                 Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                rb.AddForce(dir * thrust);
+                rb.AddForce(dir * thrust * enginesHP);
             }
 
             if (Input.GetKey(KeyCode.S))        //  ----------  BACKWARD

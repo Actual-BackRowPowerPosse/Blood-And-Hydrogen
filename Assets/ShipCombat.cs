@@ -8,6 +8,9 @@ public class ShipCombat : NetworkBehaviour
 
     public GameObject bulletRef;
 
+    public short maxHP;
+    public short currentHP;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -23,14 +26,24 @@ public class ShipCombat : NetworkBehaviour
                 Debug.Log("Shooting bullet");
                 ShootBullet();
             }
+
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                CmdAddHealth(-20);
+            }
         }
 		
 	}
+
+
 
     void ShootBullet()
     {
         CmdShootBullet();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    //  COMMANDS
 
     [Command]
     void CmdShootBullet()
@@ -41,5 +54,20 @@ public class ShipCombat : NetworkBehaviour
         bulletObj.GetComponent<Rigidbody2D>().velocity = gameObject.GetComponent<Rigidbody2D>().velocity; // add ship's initial velocity to bullet
 
         NetworkServer.Spawn(bulletObj);
+    }
+
+    [Command]
+    void CmdAddHealth(short num)
+    {
+        currentHP += num;
+        RpcSetHealth(currentHP);
+    }
+
+
+    [ClientRpc]
+    void RpcSetHealth(short num)
+    {
+        currentHP = num;
+
     }
 }

@@ -121,7 +121,6 @@ MonoBehaviour:
   topSpeed: 5
   maxAngularVel: 30
   RAM_POWER: 100
-  ownerObjRef: {fileID: 0}
 --- !u!114 &114181250385981120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -166,6 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletRef: {fileID: 1426713088251006, guid: 00b401bdb8f2f9e4eb3fb5da58910d63, type: 2}
+  maxHP: 100
 --- !u!114 &114929821713305770
 MonoBehaviour:
   m_ObjectHideFlags: 1
