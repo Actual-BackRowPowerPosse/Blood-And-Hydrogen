@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114221237610850902}
   - component: {fileID: 50097097203366920}
   - component: {fileID: 60335212797473268}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: Bullet
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 1
+  m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 3c45de31664e172429a4e46e3f2ffb2e, type: 2}
@@ -139,8 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ca8264ccd71e7949a0efc7415d3baa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletLifeTime: 10000
-  bulletThrust: 0
+  bulletLifeTime: 100
+  bulletThrust: 20
 --- !u!114 &114374406791063232
 MonoBehaviour:
   m_ObjectHideFlags: 1

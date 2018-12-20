@@ -24,7 +24,7 @@ public class ShipCombat : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Debug.Log("Shooting bullet");
-                ShootBullet();
+                //ShootBullet();
             }
 
             if (Input.GetKeyDown(KeyCode.T))

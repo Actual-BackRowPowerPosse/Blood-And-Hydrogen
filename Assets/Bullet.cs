@@ -25,8 +25,14 @@ public class Bullet : NetworkBehaviour {
     {
         if (hasAuthority)
         {
-            gameObject.layer = 8; //localShip -- won't collide with playerShip
+            Debug.Log("Projectile has authority. Won't collide with local ships");
+            gameObject.layer = 11; //localProjectiles -- won't collide with playerShip, WILL collide with networkShips
             layerSet = true;
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                DestroyObject(gameObject);
+            }
         }
 
         bulletLifeTime--;
