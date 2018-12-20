@@ -26,7 +26,7 @@ public class ShipMovement : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
-
+        gameObject.layer = 10; // networkships
         //  SHIP HAS BEEN CREATED HERE
         //  LINK TO OWNER
         //if(hasAuthority)

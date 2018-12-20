@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114221237610850902}
   - component: {fileID: 50097097203366920}
   - component: {fileID: 60335212797473268}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Bullet
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -139,8 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ca8264ccd71e7949a0efc7415d3baa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletLifeTime: 50
-  bulletThrust: 50
+  bulletLifeTime: 10000
+  bulletThrust: 0
 --- !u!114 &114374406791063232
 MonoBehaviour:
   m_ObjectHideFlags: 1

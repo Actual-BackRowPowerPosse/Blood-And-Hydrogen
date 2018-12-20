@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : NetworkBehaviour {
 
     public int bulletLifeTime; // number of physics updates bullet will last
     public float bulletThrust;
+
+    private bool layerSet = false;
 
     private Rigidbody2D rbRef;
 	// Use this for initialization
@@ -20,6 +23,12 @@ public class Bullet : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        if (hasAuthority)
+        {
+            gameObject.layer = 8; //localShip -- won't collide with playerShip
+            layerSet = true;
+        }
+
         bulletLifeTime--;
         if(bulletLifeTime < 0)
         {
