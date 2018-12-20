@@ -11,7 +11,7 @@ public class ShipMovement : NetworkBehaviour {
     public float torque = 10f;
     public float topSpeed = 10f;
     public float maxAngularVel = 10f;
-    public float RAM_POWER = 10f;
+    public float RAM_POWER = 12f; //testing some changes lool
 
     private GameObject ownerObjRef;
 
