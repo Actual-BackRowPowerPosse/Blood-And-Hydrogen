@@ -13,7 +13,7 @@ public class ShipCombat : NetworkBehaviour
 
 	// Use this for initialization
 	void Start () {
-		
+        currentHP = maxHP;
 	}
 	
 	// Update is called once per frame
@@ -53,6 +53,7 @@ public class ShipCombat : NetworkBehaviour
         bulletObj.transform.rotation = gameObject.transform.rotation;
         bulletObj.GetComponent<Rigidbody2D>().velocity = gameObject.GetComponent<Rigidbody2D>().velocity; // add ship's initial velocity to bullet
 
+        Physics2D.IgnoreCollision(bulletObj.GetComponent<PolygonCollider2D>(), gameObject.GetComponent<PolygonCollider2D>());
         NetworkServer.Spawn(bulletObj);
     }
 
