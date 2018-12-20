@@ -29,8 +29,8 @@ public class ShipMovement : NetworkBehaviour {
 
         //  SHIP HAS BEEN CREATED HERE
         //  LINK TO OWNER
-        if(hasAuthority)
-            LinkToOwner();
+        //if(hasAuthority)
+        //    LinkToOwner();
 
 
 	}
@@ -41,12 +41,13 @@ public class ShipMovement : NetworkBehaviour {
         if (hasAuthority)
         {
 
-            //if (!camSet)
-            //{
-            //    Debug.Log("Updates before setting camera: " + updateCount);
-            //    LinkToOwner();
-            //    camSet = true;
-            //}
+            if (!camSet)
+            {
+                Debug.Log("Updates before setting camera: " + updateCount);
+                LinkToOwner();
+                camSet = true;
+                gameObject.layer = 8; //localShip
+            }
 
             float angle;
             if (Input.GetKey(KeyCode.W))        //  ----------  FORWARD
@@ -75,11 +76,11 @@ public class ShipMovement : NetworkBehaviour {
                     rb.AddTorque(-torque * enginesHP);
             }
 
-            if (Input.GetKey(KeyCode.F))        //  ----------  TURN RIGHT
-            {
+            //if (Input.GetKey(KeyCode.F))        //  ----------  TURN RIGHT
+            //{
                 
-                LinkToOwner();
-            }
+            //    LinkToOwner();
+            //}
         }
 
 
