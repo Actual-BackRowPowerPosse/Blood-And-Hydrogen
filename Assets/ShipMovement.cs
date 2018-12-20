@@ -19,22 +19,35 @@ public class ShipMovement : NetworkBehaviour {
 
     private Rigidbody2D rb;
 
+    private bool camSet = false;
+
+    private short updateCount = 0;
+
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
 
         //  SHIP HAS BEEN CREATED HERE
         //  LINK TO OWNER
-        //LinkToOwner();
+        if(hasAuthority)
+            LinkToOwner();
 
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
+        updateCount++;
         if (hasAuthority)
         {
+
+            //if (!camSet)
+            //{
+            //    Debug.Log("Updates before setting camera: " + updateCount);
+            //    LinkToOwner();
+            //    camSet = true;
+            //}
+
             float angle;
             if (Input.GetKey(KeyCode.W))        //  ----------  FORWARD
             {
@@ -47,19 +60,19 @@ public class ShipMovement : NetworkBehaviour {
             {
                 angle = rb.rotation;
                 Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                rb.AddForce(-dir * thrust);
+                rb.AddForce(-dir * thrust * enginesHP);
             }
 
             if (Input.GetKey(KeyCode.A))        //  ----------  TURN LEFT
             {
                 if (rb.angularVelocity < maxAngularVel)
-                    rb.AddTorque(torque);
+                    rb.AddTorque(torque * enginesHP);
             }
 
             if (Input.GetKey(KeyCode.D))        //  ----------  TURN RIGHT
             {
                 if (rb.angularVelocity > -maxAngularVel)
-                    rb.AddTorque(-torque);
+                    rb.AddTorque(-torque * enginesHP);
             }
 
             if (Input.GetKey(KeyCode.F))        //  ----------  TURN RIGHT
@@ -99,6 +112,10 @@ public class ShipMovement : NetworkBehaviour {
                 }
 
             }
+
+
+
+            // camera look at this object
         }
         
     }
