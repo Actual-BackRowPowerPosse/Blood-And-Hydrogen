@@ -67,14 +67,14 @@ public class CameraMovement : MonoBehaviour {
 
 
 
-            ////  Move camera position to show what is ahead of player
-            //transformVect.x += rbRef.velocity.x * speedTranslateCoeff;
-            //transformVect.y += rbRef.velocity.y * speedTranslateCoeff / 1.8f;
+            //  Move camera position to show what is ahead of player
+            transformVect.x += rbRef.velocity.x * speedTranslateCoeff;
+            transformVect.y += rbRef.velocity.y * speedTranslateCoeff / 1.8f; // divided to compensate for short heighth of screen
 
 
-            //// Keep camera from 'jumping' -- will only move at maximum a certain distance each update
-            //transformVect.x = clampFloat((transform.position.x + transformVect.x) - prevX, -camMaxTranslateSpeed, camMaxTranslateSpeed);
-            //transformVect.y = clampFloat((transform.position.y + transformVect.y) - prevY, -camMaxTranslateSpeed, camMaxTranslateSpeed);
+            // Keep camera from 'jumping' -- will only move at maximum a certain distance each update
+            transformVect.x = clampFloat((transform.position.x + transformVect.x) - prevX, -camMaxTranslateSpeed, camMaxTranslateSpeed);
+            transformVect.y = clampFloat((transform.position.y + transformVect.y) - prevY, -camMaxTranslateSpeed, camMaxTranslateSpeed);
 
             //  Actually move camera, pass in vector
             transform.Translate(transformVect);
