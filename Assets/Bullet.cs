@@ -18,8 +18,10 @@ public class Bullet : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         
-	}
+
+    }
 
     private void FixedUpdate()
     {
@@ -41,6 +43,7 @@ public class Bullet : NetworkBehaviour {
             DestroyObject(gameObject);
         }
 
+        //  apply thrust forward -- where bullet is pointed
         float angle = rbRef.rotation;
         Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
         rbRef.AddForce(dir * bulletThrust);

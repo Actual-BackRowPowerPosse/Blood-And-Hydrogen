@@ -127,7 +127,7 @@ MonoBehaviour:
     i14: 13
     i15: 99
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114221237610850902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletLifeTime: 100
-  bulletThrust: 20
+  bulletThrust: 35
 --- !u!114 &114374406791063232
 MonoBehaviour:
   m_ObjectHideFlags: 1

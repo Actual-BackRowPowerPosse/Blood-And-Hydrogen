@@ -84,25 +84,9 @@ public class PlayerConnection : NetworkBehaviour {
     void CmdSpawnMyShip()
     {
 
-        Debug.Log("Incrementing shipcount");
         playerShipCount++; // only the server will record how many playerShips it has spawned
-
-        Debug.Log("Entering CmdSpawnMyShip()");
-
-        // create on server-side
         GameObject go = Instantiate(PlayerObjPrefab);
-
-        //go.gameObject.name = "bob";
-
-
         PlayerShipObj = go;
-        
-
-        Debug.Log("Go object: " + go);
-        Debug.Log("PlayerShipObj: " + PlayerShipObj);
-
-
-        // propagate to all clients, set initiating client's COMPUTER to have authority to modify 'go' object
         NetworkServer.SpawnWithClientAuthority(go, connectionToClient);
 
         
