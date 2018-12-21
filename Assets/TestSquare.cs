@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TestSquare : MonoBehaviour {
 
+    public GameObject parentShipObjectRef;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -11,6 +13,6 @@ public class TestSquare : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+       // transform.Rotate(new Vector3(0.0f, 0.0f, 0.3f));
 	}
 }

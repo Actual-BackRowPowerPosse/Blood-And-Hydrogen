@@ -13,6 +13,8 @@ public class ShipMovement : NetworkBehaviour {
     public float maxAngularVel = 10f;
     public float RAM_POWER = 10f;
 
+    public GameObject childUI;
+
     private GameObject ownerObjRef;
 
     private GameObject camRef;
@@ -31,13 +33,18 @@ public class ShipMovement : NetworkBehaviour {
         //  LINK TO OWNER
         //if(hasAuthority)
         //    LinkToOwner();
+        Quaternion rotation = new Quaternion(0.0f, 0.0f, gameObject.transform.rotation.z, 0.0f);
+        childUI.transform.rotation = rotation;
 
-
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
         updateCount++;
+        //Vector3 rotation = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, gameObject.transform.rotation.z * -1);
+        Quaternion rotation = new Quaternion(0.0f, 0.0f, gameObject.transform.rotation.z, 0.0f);
+        childUI.transform.rotation = rotation;
+
         if (hasAuthority)
         {
 
