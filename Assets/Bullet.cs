@@ -6,8 +6,8 @@ public class Bullet : MonoBehaviour {
 
     public int bulletLifeTime; // number of physics updates bullet will last
     public float bulletThrust;
-
     private Rigidbody2D rbRef;
+
 	// Use this for initialization
 	void Start () {
         rbRef = gameObject.GetComponent<Rigidbody2D>();

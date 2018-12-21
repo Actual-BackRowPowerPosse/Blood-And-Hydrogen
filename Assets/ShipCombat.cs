@@ -5,9 +5,9 @@ using UnityEngine.Networking;
 
 public class ShipCombat : NetworkBehaviour
 {
-
     public GameObject bulletRef;
-
+    public GameObject rocketRef;
+    
     public short maxHP;
     public short currentHP;
 
@@ -31,6 +31,12 @@ public class ShipCombat : NetworkBehaviour
             {
                 CmdAddHealth(-20);
             }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("Shooting rocket");
+                ShootRocket();
+            }
         }
 		
 	}
@@ -41,6 +47,12 @@ public class ShipCombat : NetworkBehaviour
     {
         CmdShootBullet();
     }
+
+    void ShootRocket()
+    {
+        CmdShootRocket();
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////
     //  COMMANDS
@@ -55,6 +67,17 @@ public class ShipCombat : NetworkBehaviour
 
         Physics2D.IgnoreCollision(bulletObj.GetComponent<PolygonCollider2D>(), gameObject.GetComponent<PolygonCollider2D>());
         NetworkServer.Spawn(bulletObj);
+    }
+    [Command]
+    void CmdShootRocket()
+    {
+        GameObject rocketObj = Instantiate(rocketRef);
+        rocketObj.transform.position = gameObject.transform.position; // set object to same position as 'THIS' object
+        rocketObj.transform.rotation = gameObject.transform.rotation;
+        rocketObj.GetComponent<Rigidbody2D>().velocity = gameObject.GetComponent<Rigidbody2D>().velocity; // add ship's initial velocity to rocket
+
+        Physics2D.IgnoreCollision(rocketObj.GetComponent<PolygonCollider2D>(), gameObject.GetComponent<PolygonCollider2D>());
+        NetworkServer.Spawn(rocketObj);
     }
 
     [Command]
