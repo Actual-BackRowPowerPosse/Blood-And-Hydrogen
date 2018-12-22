@@ -6,9 +6,12 @@ using UnityEngine.Networking;
 public class PlayerConnection : NetworkBehaviour {
 
     public GameObject PlayerObjPrefab;
+    public GameObject bulletPrefab;
+
     public GameObject camRef;
 
     public GameObject PlayerShipObj;
+    
 
     [SyncVar]
     public short playerShipCount = 0;
@@ -52,38 +55,38 @@ public class PlayerConnection : NetworkBehaviour {
                 string n = "PlayerConnection (" + Random.Range(0, 100) + ")";
                 CmdChangePlayerShipName(n);
             }
-            
 
-            
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                CmdShootBullet();
+            }
+
+
+
         }
 		
 	}
 
     /////////////////////////////////////////////  COMMANDS
     //  Initiated by a client, executed on Server side
+
+    
+    [Command]
+    void CmdShootBullet()
+    {
+        GameObject bulletObj = Instantiate(bulletPrefab);
+        bulletObj.transform.position = PlayerShipObj.transform.position;
+        bulletObj.transform.rotation = PlayerShipObj.transform.rotation;
+        NetworkServer.SpawnWithClientAuthority(bulletObj, connectionToClient);
+    }
+
     [Command]
     void CmdSpawnMyShip()
     {
 
-        Debug.Log("Incrementing shipcount");
         playerShipCount++; // only the server will record how many playerShips it has spawned
-
-        Debug.Log("Entering CmdSpawnMyShip()");
-
-        // create on server-side
         GameObject go = Instantiate(PlayerObjPrefab);
-
-        //go.gameObject.name = "bob";
-
-
         PlayerShipObj = go;
-        
-
-        Debug.Log("Go object: " + go);
-        Debug.Log("PlayerShipObj: " + PlayerShipObj);
-
-
-        // propagate to all clients, set initiating client's COMPUTER to have authority to modify 'go' object
         NetworkServer.SpawnWithClientAuthority(go, connectionToClient);
 
         

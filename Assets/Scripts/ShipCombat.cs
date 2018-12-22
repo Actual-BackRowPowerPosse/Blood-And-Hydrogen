@@ -23,8 +23,8 @@ public class ShipCombat : NetworkBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                Debug.Log("Shooting bullet");
-                ShootBullet();
+                //Debug.Log("Shooting bullet");
+                //ShootBullet();
             }
 
             if (Input.GetKeyDown(KeyCode.T))
@@ -53,8 +53,8 @@ public class ShipCombat : NetworkBehaviour
         bulletObj.transform.rotation = gameObject.transform.rotation;
         bulletObj.GetComponent<Rigidbody2D>().velocity = gameObject.GetComponent<Rigidbody2D>().velocity; // add ship's initial velocity to bullet
 
-        Physics2D.IgnoreCollision(bulletObj.GetComponent<PolygonCollider2D>(), gameObject.GetComponent<PolygonCollider2D>());
-        NetworkServer.Spawn(bulletObj);
+        
+        NetworkServer.SpawnWithClientAuthority(bulletObj, connectionToClient);
     }
 
     [Command]
@@ -62,6 +62,16 @@ public class ShipCombat : NetworkBehaviour
     {
         currentHP += num;
         RpcSetHealth(currentHP);
+    }
+
+
+    ////////////////////////////////////////////////////////////////
+    //  RPC's
+
+    [ClientRpc]
+    void RpcBulletShot()
+    {
+
     }
 
 

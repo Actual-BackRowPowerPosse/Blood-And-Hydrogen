@@ -54,6 +54,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerObjPrefab: {fileID: 1152183659351184, guid: 9b3371cb2c279f645962748a3e73c6b4,
     type: 2}
+  bulletPrefab: {fileID: 1426713088251006, guid: 00b401bdb8f2f9e4eb3fb5da58910d63,
+    type: 2}
   camRef: {fileID: 0}
   PlayerShipObj: {fileID: 0}
   playerShipCount: 0
