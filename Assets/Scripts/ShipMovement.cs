@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Networking;
 
 public class ShipMovement : NetworkBehaviour {
@@ -15,11 +16,15 @@ public class ShipMovement : NetworkBehaviour {
 
     public GameObject childUI;
 
+    public Text nameLabelRef;
+
     private GameObject ownerObjRef;
 
     private GameObject camRef;
 
     private Rigidbody2D rb;
+
+
 
     private bool camSet = false;
 
@@ -35,6 +40,9 @@ public class ShipMovement : NetworkBehaviour {
         //    LinkToOwner();
         Quaternion rotation = new Quaternion(0.0f, 0.0f, gameObject.transform.rotation.z, 0.0f);
         childUI.transform.rotation = rotation;
+
+
+
 
     }
 	
@@ -54,6 +62,8 @@ public class ShipMovement : NetworkBehaviour {
                 LinkToOwner();
                 camSet = true;
                 gameObject.layer = 8; //localShip
+
+
             }
 
             float angle;
@@ -83,6 +93,12 @@ public class ShipMovement : NetworkBehaviour {
                     rb.AddTorque(-torque * enginesHP);
             }
 
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                updateNames();
+            }
+
             //if (Input.GetKey(KeyCode.F))        //  ----------  TURN RIGHT
             //{
                 
@@ -91,6 +107,11 @@ public class ShipMovement : NetworkBehaviour {
         }
 
 
+    }
+
+    private void updateNames()
+    {
+        ownerObjRef.GetComponent<PlayerConnection>().UpdateNamesInit();
     }
 
     private void LinkToOwner()
@@ -116,6 +137,7 @@ public class ShipMovement : NetworkBehaviour {
                     playerObj.PlayerShipObj = gameObject;  // player object will look at THIS
                     ownerObjRef = allPlayers[i];           // THIS will look at playerobject
                     playerObj.LinkCameraToObj(gameObject);
+                    setDisplayName(ownerObjRef.GetComponent<PlayerConnection>().name);
                     playerFound = true;
                 }
 
@@ -128,6 +150,24 @@ public class ShipMovement : NetworkBehaviour {
         
     }
 
+
+    public void setDisplayName(string name)
+    {
+        CmdSetDisplayName(name);
+    }
+
+    [Command]
+    void CmdSetDisplayName(string name)
+    {
+        nameLabelRef.GetComponent<Text>().text = name;
+        RpcSetDisplayName(name);
+    }
+
+    [ClientRpc]
+    void RpcSetDisplayName(string name)
+    {
+        nameLabelRef.GetComponent<Text>().text = name;
+    }
     
 
 

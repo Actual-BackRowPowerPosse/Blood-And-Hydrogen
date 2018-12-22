@@ -11,6 +11,10 @@ public class PlayerConnection : NetworkBehaviour {
     public GameObject camRef;
 
     public GameObject PlayerShipObj;
+
+    private bool nameInitialized = false;
+
+    //public Text nameLabelRef;
     
 
     [SyncVar]
@@ -52,8 +56,9 @@ public class PlayerConnection : NetworkBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                string n = "PlayerConnection (" + Random.Range(0, 100) + ")";
+                string n = "Player (" + Random.Range(0, 100) + ")";
                 CmdChangePlayerShipName(n);
+                PlayerShipObj.GetComponent<ShipMovement>().setDisplayName(n);
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -66,6 +71,36 @@ public class PlayerConnection : NetworkBehaviour {
         }
 		
 	}
+
+    public void UpdateNamesInit()
+    {
+        CmdUpdateNamesInit();
+    }
+
+    [Command]
+    void CmdUpdateNamesInit()
+    {
+        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
+
+        for(int i = 0; i < allPlayers.Length; i++)
+        {
+            PlayerConnection playerRef = allPlayers[i].GetComponent<PlayerConnection>();
+            playerRef.RpcUpdateNamesInit(playerRef.name);
+        }
+
+        //RpcUpdateNamesInit(gameObject.name);
+    }
+
+    [ClientRpc]
+    void RpcUpdateNamesInit(string name)
+    {
+        if (true)
+        {
+            gameObject.name = name;
+            nameInitialized = true;
+        }
+        
+    }
 
     /////////////////////////////////////////////  COMMANDS
     //  Initiated by a client, executed on Server side
@@ -115,6 +150,8 @@ public class PlayerConnection : NetworkBehaviour {
     void RpcUpdateName(string n)
     {
         gameObject.name = n;
+        nameInitialized = true;
+
     }
 
     [ClientRpc]

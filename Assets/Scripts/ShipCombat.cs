@@ -19,6 +19,9 @@ public class ShipCombat : NetworkBehaviour
 	// Update is called once per frame
 	void Update () {
 
+        
+
+
         if (hasAuthority)
         {
             if (Input.GetKeyDown(KeyCode.Space))
