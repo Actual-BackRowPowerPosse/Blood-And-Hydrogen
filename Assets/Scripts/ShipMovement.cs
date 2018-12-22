@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ShipMovement : NetworkBehaviour {
 
@@ -12,6 +13,7 @@ public class ShipMovement : NetworkBehaviour {
     public float topSpeed = 10f;
     public float maxAngularVel = 10f;
     public float RAM_POWER = 12f; //testing some changes lool
+    public Text playerName;
 
     public GameObject childUI;
 
@@ -62,6 +64,11 @@ public class ShipMovement : NetworkBehaviour {
                 angle = rb.rotation;
                 Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
                 rb.AddForce(dir * thrust * enginesHP);
+            }
+            if (Input.GetKey(KeyCode.Q))
+            {
+                CmdChangeName("NEW NAME");
+                Debug.Log(playerName);
             }
 
             if (Input.GetKey(KeyCode.S))        //  ----------  BACKWARD
@@ -141,5 +148,16 @@ public class ShipMovement : NetworkBehaviour {
     void CmdDestroyShip()
     {
         Destroy(gameObject);
+    }
+    [Command]
+    void CmdChangeName(string n)
+    {
+        playerName.text = n;
+        RpcChangeName(n);
+    }
+    [ClientRpc]
+    void RpcChangeName(string n)
+    {
+        playerName.text = n;
     }
 }

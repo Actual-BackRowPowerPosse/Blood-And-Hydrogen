@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ShipCombat : NetworkBehaviour
 {
@@ -10,6 +11,7 @@ public class ShipCombat : NetworkBehaviour
 
     public short maxHP;
     public short currentHP;
+    public Slider healthBar;
 
 	// Use this for initialization
 	void Start () {
@@ -35,7 +37,10 @@ public class ShipCombat : NetworkBehaviour
 		
 	}
 
-
+    float calculateHealth()
+    {
+        return (currentHP / maxHP);
+    }
 
     void ShootBullet()
     {
@@ -61,6 +66,10 @@ public class ShipCombat : NetworkBehaviour
     void CmdAddHealth(short num)
     {
         currentHP += num;
+
+        //healthBar.value = calculateHealth();
+        healthBar.value = 100f;
+        Debug.Log("HB Value " + healthBar.value);
         RpcSetHealth(currentHP);
     }
 
@@ -79,6 +88,7 @@ public class ShipCombat : NetworkBehaviour
     void RpcSetHealth(short num)
     {
         currentHP = num;
+        healthBar.value = calculateHealth();
 
     }
 }
