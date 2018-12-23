@@ -14,6 +14,8 @@ public class PlayerConnection : NetworkBehaviour {
 
     private bool nameInitialized = false;
 
+    string pname = "player";
+
     //public Text nameLabelRef;
     
 
@@ -21,7 +23,11 @@ public class PlayerConnection : NetworkBehaviour {
     public short playerShipCount = 0;
 
 
-    
+    void OnGUI()
+    {
+
+        pname = GUI.TextField(new Rect(25, Screen.height - 40, 100, 30), pname);
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -35,24 +41,16 @@ public class PlayerConnection : NetworkBehaviour {
             // Set camera to look at ship
             //LinkCameraToObj(PlayerShipObj);
 
-
+            
 
 
         }
 		
 	}
 
-    public void LinkCameraToObj( GameObject obj)
+    // Update is called once per frame
+    void Update()
     {
-        if (isLocalPlayer)
-        {
-            camRef = GameObject.Find("MainCamera");
-            camRef.GetComponent<CameraMovement>().lookAtObject(obj); // set camera to look at argument object
-        }
-    }
-	
-	// Update is called once per frame
-	void Update () {
 
         if (isLocalPlayer)
         {
@@ -68,11 +66,27 @@ public class PlayerConnection : NetworkBehaviour {
                 CmdShootBullet();
             }
 
-
+            if (Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                gameObject.name = pname;
+                PlayerShipObj.GetComponent<ShipMovement>().setDisplayName(gameObject.name);
+            }
 
         }
-		
-	}
+
+    }
+
+    public void LinkCameraToObj( GameObject obj)
+    {
+        if (isLocalPlayer)
+        {
+            camRef = GameObject.Find("MainCamera");
+            camRef.GetComponent<CameraMovement>().lookAtObject(obj); // set camera to look at argument object
+            
+        }
+    }
+	
+	
 
     //  ===================================================================================================
     //  **************************     UPDATE NAMES UPON CLIENT INITIALIZATION      ***********************
@@ -87,7 +101,7 @@ public class PlayerConnection : NetworkBehaviour {
     [Command]
     void CmdUpdateNamesInit()
     {
-        Debug.Log("Server beginning to process request...");
+        //Debug.Log("Server beginning to process request...");
 
         GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
 

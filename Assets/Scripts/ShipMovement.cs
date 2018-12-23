@@ -26,6 +26,7 @@ public class ShipMovement : NetworkBehaviour {
 
 
 
+
     private bool camSet = false;
 
     private short updateCount = 0;
@@ -62,7 +63,7 @@ public class ShipMovement : NetworkBehaviour {
                 LinkToOwner();
                 camSet = true;
                 gameObject.layer = 8; //localShip
-                updateNames();
+                updateNamesInit();
 
             }
 
@@ -96,7 +97,7 @@ public class ShipMovement : NetworkBehaviour {
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-                updateNames();
+                updateNamesInit();
             }
 
             //if (Input.GetKey(KeyCode.F))        //  ----------  TURN RIGHT
@@ -108,8 +109,8 @@ public class ShipMovement : NetworkBehaviour {
 
 
     }
-
-    private void updateNames()
+    
+    private void updateNamesInit()
     {
         //Debug.Log(gameObject.name + " is requesting playernames from server");
 
@@ -123,7 +124,7 @@ public class ShipMovement : NetworkBehaviour {
 
         if (hasAuthority)
         {
-            //Debug.Log("This playership has authority, attempting link...");
+            //Debug.Log("This playership has authority, attempting link...");♣
 
             GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
 
