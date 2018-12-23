@@ -31,12 +31,9 @@ public class CameraMovement : MonoBehaviour {
 
     
 
-	
-	// Update is called once per frame
-	void Update () {
-
-        
-        if(rbRef == null)
+	void FixedUpdate()
+    {
+        if (rbRef == null)
         {
             hasSet = false;
         }
@@ -83,6 +80,14 @@ public class CameraMovement : MonoBehaviour {
             prevX = transform.position.x;
             prevY = transform.position.y;
         }
+    }
+
+
+	// Update is called once per frame
+	void Update () {
+
+        
+        
         
 
     }

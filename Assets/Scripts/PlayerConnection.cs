@@ -21,6 +21,8 @@ public class PlayerConnection : NetworkBehaviour {
     public short playerShipCount = 0;
 
 
+    
+
 	// Use this for initialization
 	void Start () {
 
@@ -72,20 +74,30 @@ public class PlayerConnection : NetworkBehaviour {
 		
 	}
 
+    //  ===================================================================================================
+    //  **************************     UPDATE NAMES UPON CLIENT INITIALIZATION      ***********************
+    //  ===================================================================================================
+
     public void UpdateNamesInit()
     {
+        //Debug.Log("Entered client's PlayerConnection request");
         CmdUpdateNamesInit();
     }
 
     [Command]
     void CmdUpdateNamesInit()
     {
+        Debug.Log("Server beginning to process request...");
+
         GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
 
         for(int i = 0; i < allPlayers.Length; i++)
         {
             PlayerConnection playerRef = allPlayers[i].GetComponent<PlayerConnection>();
+            ShipMovement playerShipRef = playerRef.PlayerShipObj.GetComponent<ShipMovement>();
+            //Debug.Log("Player " + allPlayers[i].name + " about to send info in an RPC");
             playerRef.RpcUpdateNamesInit(playerRef.name);
+            playerShipRef.setDisplayName(playerRef.name);
         }
 
         //RpcUpdateNamesInit(gameObject.name);
@@ -96,6 +108,7 @@ public class PlayerConnection : NetworkBehaviour {
     {
         if (true)
         {
+            //Debug.Log("Received " + name + " name from server");
             gameObject.name = name;
             nameInitialized = true;
         }

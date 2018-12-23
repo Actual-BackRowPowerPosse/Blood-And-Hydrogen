@@ -27,9 +27,12 @@ public class Bullet : NetworkBehaviour {
     {
         if (hasAuthority)
         {
-            Debug.Log("Projectile has authority. Won't collide with local ships");
-            gameObject.layer = 11; //localProjectiles -- won't collide with playerShip, WILL collide with networkShips
-            layerSet = true;
+            if (!layerSet)
+            {
+                Debug.Log("Projectile has authority. Won't collide with local ships");
+                gameObject.layer = 11; //localProjectiles -- won't collide with playerShip, WILL collide with networkShips
+                layerSet = true;
+            }
 
             if (Input.GetKeyDown(KeyCode.F))
             {
