@@ -9,13 +9,14 @@ public class ShipCombat : NetworkBehaviour
 
     public GameObject bulletRef;
 
-    public short maxHP;
-    public short currentHP;
+    public float maxHP;
+    public float currentHP;
     public Slider healthBar;
 
 	// Use this for initialization
 	void Start () {
         currentHP = maxHP;
+        healthBar.value = 100f;
 	}
 	
 	// Update is called once per frame
@@ -63,12 +64,11 @@ public class ShipCombat : NetworkBehaviour
     }
 
     [Command]
-    void CmdAddHealth(short num)
+    void CmdAddHealth(float num)
     {
         currentHP += num;
 
-        //healthBar.value = calculateHealth();
-        healthBar.value = 100f;
+        healthBar.value = calculateHealth();
         Debug.Log("HB Value " + healthBar.value);
         RpcSetHealth(currentHP);
     }
@@ -85,7 +85,7 @@ public class ShipCombat : NetworkBehaviour
 
 
     [ClientRpc]
-    void RpcSetHealth(short num)
+    void RpcSetHealth(float num)
     {
         currentHP = num;
         healthBar.value = calculateHealth();
