@@ -14,7 +14,8 @@ public class PlayerConnection : NetworkBehaviour {
 
     private bool nameInitialized = false;
 
-    string pname = "player";
+
+    public string pname = "player";
 
     //public Text nameLabelRef;
     
@@ -22,11 +23,12 @@ public class PlayerConnection : NetworkBehaviour {
     [SyncVar]
     public short playerShipCount = 0;
 
+    private int boxHeight = 0;
 
     void OnGUI()
     {
-
-        pname = GUI.TextField(new Rect(25, Screen.height - 40, 100, 30), pname);
+       // if(isLocalPlayer)
+            pname = GUI.TextField(new Rect(50, boxHeight, 100, 30), pname);
     }
 
 	// Use this for initialization
@@ -37,14 +39,22 @@ public class PlayerConnection : NetworkBehaviour {
             CmdSpawnMyShip();
 
 
+            boxHeight = Screen.height - 50;
+
+
             //Debug.Log("Spawning ship: " + PlayerShipObj);
             // Set camera to look at ship
             //LinkCameraToObj(PlayerShipObj);
 
-            
+
+
+
+
 
 
         }
+        else
+            boxHeight = Screen.height + 100;
 		
 	}
 
@@ -68,6 +78,7 @@ public class PlayerConnection : NetworkBehaviour {
 
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
+                Debug.Log("value of pname: " + pname);
                 gameObject.name = pname;
                 PlayerShipObj.GetComponent<ShipMovement>().setDisplayName(gameObject.name);
             }
