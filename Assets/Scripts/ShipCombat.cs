@@ -11,8 +11,13 @@ public class ShipCombat : NetworkBehaviour
     public GameObject healthBarRef;
     public HealthBar hBarScriptRef;
 
+    public GameObject explosionPrefab;
+
     public short maxHP;
     public short currentHP;
+
+
+    
 
 	// Use this for initialization
 	void Start () {
@@ -41,10 +46,36 @@ public class ShipCombat : NetworkBehaviour
                 //healthBarRef.transform.localScale -= new Vector3(0.7f, 0.0f);
             }
         }
+
+        if(currentHP <= 0)
+        {
+            explode(50);
+            Destroy(gameObject);
+        }
 		
 	}
 
-    
+    public void explode(short duration)
+    {
+        CmdExplode(duration);
+    }
+
+    [Command]
+    void CmdExplode(short duration)
+    {
+        GameObject explosion = Instantiate(explosionPrefab);
+        explosion.GetComponent<Explosion>().setExplosion(gameObject.transform.position.x, gameObject.transform.position.y, duration);
+        RpcExplode(duration);
+        Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    void RpcExplode(short duration)
+    {
+        GameObject explosion = Instantiate(explosionPrefab);
+        explosion.GetComponent<Explosion>().setExplosion(gameObject.transform.position.x, gameObject.transform.position.y, duration);
+        Destroy(gameObject);
+    }
 
     void ShootBullet()
     {

@@ -36,7 +36,7 @@ public class PlayerConnection : NetworkBehaviour {
 
         if (isLocalPlayer)
         {
-            CmdSpawnMyShip();
+            
 
 
             boxHeight = Screen.height - 50;
@@ -45,11 +45,6 @@ public class PlayerConnection : NetworkBehaviour {
             //Debug.Log("Spawning ship: " + PlayerShipObj);
             // Set camera to look at ship
             //LinkCameraToObj(PlayerShipObj);
-
-
-
-
-
 
 
         }
@@ -81,6 +76,16 @@ public class PlayerConnection : NetworkBehaviour {
                 Debug.Log("value of pname: " + textBoxString);
                 CmdChangePlayerShipName(textBoxString);
                 PlayerShipObj.GetComponent<ShipMovement>().setDisplayName(gameObject.name);
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                if(PlayerShipObj != null)
+                {
+                    ShipCombat combatRef = PlayerShipObj.GetComponent<ShipCombat>();
+                    combatRef.explode(50); // explosion duration of 50 fixedupdates
+                }
+                CmdSpawnMyShip();
             }
 
         }

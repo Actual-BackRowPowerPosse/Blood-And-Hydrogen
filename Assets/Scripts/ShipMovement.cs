@@ -97,11 +97,6 @@ public class ShipMovement : NetworkBehaviour {
                 rb.AddTorque(-torque * enginesHP);
         }
 
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            updateDataInit();
-        }
     }
 
     void initializePlayer()

@@ -450,6 +450,8 @@ MonoBehaviour:
   bulletRef: {fileID: 1426713088251006, guid: 00b401bdb8f2f9e4eb3fb5da58910d63, type: 2}
   healthBarRef: {fileID: 1203008868258530}
   hBarScriptRef: {fileID: 0}
+  explosionPrefab: {fileID: 1741776813406048, guid: dbd6006261c11c3498907f611572b526,
+    type: 2}
   maxHP: 100
   currentHP: 0
 --- !u!114 &114900484597141064
