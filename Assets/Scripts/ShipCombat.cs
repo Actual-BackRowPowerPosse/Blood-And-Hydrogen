@@ -8,12 +8,16 @@ public class ShipCombat : NetworkBehaviour
 
     public GameObject bulletRef;
 
+    public GameObject healthBarRef;
+    public HealthBar hBarScriptRef;
+
     public short maxHP;
     public short currentHP;
 
 	// Use this for initialization
 	void Start () {
         currentHP = maxHP;
+        hBarScriptRef = healthBarRef.GetComponent<HealthBar>();
 	}
 	
 	// Update is called once per frame
@@ -33,17 +37,21 @@ public class ShipCombat : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.T))
             {
                 CmdAddHealth(-20);
+                //hBarScriptRef.UpdateHealthBar(-.2f);
+                //healthBarRef.transform.localScale -= new Vector3(0.7f, 0.0f);
             }
         }
 		
 	}
 
-
+    
 
     void ShootBullet()
     {
         CmdShootBullet();
     }
+
+    
 
     ///////////////////////////////////////////////////////////////////////////////
     //  COMMANDS
@@ -63,13 +71,24 @@ public class ShipCombat : NetworkBehaviour
     [Command]
     void CmdAddHealth(short num)
     {
+        //Debug.Log("Adding " + num + " hp to player");
         currentHP += num;
+        float maxAsFloat = (float)maxHP;
+        float subtractPercent = num / maxAsFloat;
+        //hBarScriptRef.UpdateHealthBar(subtractPercent);
         RpcSetHealth(currentHP);
+        RpcUpdateHealthBar(subtractPercent);
     }
 
 
     ////////////////////////////////////////////////////////////////
     //  RPC's
+
+    [ClientRpc]
+    void RpcUpdateHealthBar(float subtraction)
+    {
+        hBarScriptRef.UpdateHealthBar(subtraction);
+    }
 
     [ClientRpc]
     void RpcBulletShot()
@@ -82,6 +101,6 @@ public class ShipCombat : NetworkBehaviour
     void RpcSetHealth(short num)
     {
         currentHP = num;
-
+        //healthBarRef.transform.localScale = new Vector3(0.7f, 1.0f);
     }
 }

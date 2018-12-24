@@ -7,4 +7,4 @@ PhysicsMaterial2D:
   m_PrefabInternal: {fileID: 0}
   m_Name: SUPER BOUNCE
   friction: 0.45
-  bounciness: 0.99999
+  bounciness: 0.9999
