@@ -74,10 +74,10 @@ public class ShipCombat : NetworkBehaviour
         //Debug.Log("Adding " + num + " hp to player");
         currentHP += num;
         float maxAsFloat = (float)maxHP;
-        float subtractPercent = num / maxAsFloat;
+        float HP_Percent = currentHP / maxAsFloat;
         //hBarScriptRef.UpdateHealthBar(subtractPercent);
         RpcSetHealth(currentHP);
-        RpcUpdateHealthBar(subtractPercent);
+        RpcUpdateHealthBar(HP_Percent);
     }
 
 
