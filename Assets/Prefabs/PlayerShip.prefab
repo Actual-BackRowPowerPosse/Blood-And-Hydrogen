@@ -198,8 +198,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1327860388226762}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0.000003539957}
-  m_LocalPosition: {x: -0.04, y: 3.93, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.042, y: 2.573, z: 0}
+  m_LocalScale: {x: 1, y: 0.348773, z: 1}
   m_Children:
   - {fileID: 4712369345849140}
   - {fileID: 4483510417482856}
@@ -253,7 +253,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1152183659351184}
   m_LocalRotation: {x: 0, y: 0, z: 0.0008726948, w: 0.99999964}
-  m_LocalPosition: {x: -0.84606075, y: 6.5282564, z: 0}
+  m_LocalPosition: {x: 2.0337448, y: 5.5771513, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4148862271275102}
@@ -480,7 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 2
-  m_SendInterval: 0.1
+  m_SendInterval: 0.14285715
   m_SyncRotationAxis: 3
   m_RotationSyncCompression: 0
   m_SyncSpin: 0

@@ -103,14 +103,16 @@ public class PlayerConnection : NetworkBehaviour {
     //  **************************     UPDATE NAMES UPON CLIENT INITIALIZATION      ***********************
     //  ===================================================================================================
 
-    public void UpdateNamesInit()
+    public void updateDataInit()
     {
         //Debug.Log("Entered client's PlayerConnection request");
-        CmdUpdateNamesInit();
+        CmdUpdateDataInit();
     }
 
+    //  When client loads into server, he requests data of all other gameobjects from server
+    //  This function loops through every game object ON THE SERVER, and broadcasts data from each one.
     [Command]
-    void CmdUpdateNamesInit()
+    void CmdUpdateDataInit()
     {
         //Debug.Log("Server beginning to process request...");
 
@@ -118,11 +120,20 @@ public class PlayerConnection : NetworkBehaviour {
 
         for(int i = 0; i < allPlayers.Length; i++)
         {
+            // update names
             PlayerConnection playerRef = allPlayers[i].GetComponent<PlayerConnection>();
             ShipMovement playerShipRef = playerRef.PlayerShipObj.GetComponent<ShipMovement>();
-            //Debug.Log("Player " + allPlayers[i].name + " about to send info in an RPC");
             playerRef.RpcUpdateNamesInit(playerRef.name);
             playerShipRef.setDisplayName(playerRef.name);
+
+            //  Update HP
+            ShipCombat playerCombatRef = playerRef.PlayerShipObj.GetComponent<ShipCombat>();
+            Debug.Log("Player " + allPlayers[i].name + "'s hp on server: " + playerCombatRef.currentHP);
+            playerCombatRef.RpcSetHealth(playerCombatRef.currentHP);
+            playerCombatRef.RpcUpdateHealthBar(playerCombatRef.currentHP);
+
+            //  Add more 'paragraphs' as more data types get added
+
         }
 
         //RpcUpdateNamesInit(gameObject.name);
@@ -192,35 +203,7 @@ public class PlayerConnection : NetworkBehaviour {
 
     }
 
-    [ClientRpc]
-    void RpcUpdateReferences(short shipCount)
-    {
-
-        //Debug.Log("looking for playership");
-
-        //GameObject[] search = GameObject.FindGameObjectsWithTag("PlayerShip(Clone)"); // create array of all spawned ships
-
-        //for(int i = 0; i < search.Length; i++) // loop through all ships
-        //{
-
-        //    NetworkBehaviour obj = search[i].GetComponent<ShipMovement>();  // create ref to look at script
-
-        //    if (obj.hasAuthority) // if the ship object has authority
-        //        PlayerShipObj = search[i];  // set this class object's reference
-        //}
-
-        //PlayerShipObj.name = "PlayerShip (" + shipCount + ")";
-
-        //Debug.Log("PlayerShipObj = " + PlayerShipObj);
-        
-        
-
-        //if (isLocalPlayer)
-        //{
-        //    LinkCameraToObj(PlayerShipObj);
-        //}
-        
-    }
+    
 
     
 

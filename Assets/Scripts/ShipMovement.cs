@@ -59,63 +59,69 @@ public class ShipMovement : NetworkBehaviour {
 
             if (!camSet)
             {
-                Debug.Log("Updates before setting camera: " + updateCount);
-                LinkToOwner();
-                camSet = true;
-                gameObject.layer = 8; //localShip
-                updateNamesInit();
-
+                initializePlayer();
             }
 
-            float angle;
-            if (Input.GetKey(KeyCode.W))        //  ----------  FORWARD
-            {
-                angle = rb.rotation;
-                Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                rb.AddForce(dir * thrust * enginesHP);
-            }
-
-            if (Input.GetKey(KeyCode.S))        //  ----------  BACKWARD
-            {
-                angle = rb.rotation;
-                Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                rb.AddForce(-dir * thrust * enginesHP);
-            }
-
-            if (Input.GetKey(KeyCode.A))        //  ----------  TURN LEFT
-            {
-                if (rb.angularVelocity < maxAngularVel)
-                    rb.AddTorque(torque * enginesHP);
-            }
-
-            if (Input.GetKey(KeyCode.D))        //  ----------  TURN RIGHT
-            {
-                if (rb.angularVelocity > -maxAngularVel)
-                    rb.AddTorque(-torque * enginesHP);
-            }
-
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                updateNamesInit();
-            }
-
-            //if (Input.GetKey(KeyCode.F))        //  ----------  TURN RIGHT
-            //{
-                
-            //    LinkToOwner();
-            //}
+            processInputs();
         }
 
 
     }
+
+    void processInputs()
+    {
+        float angle;
+        if (Input.GetKey(KeyCode.W))        //  ----------  FORWARD
+        {
+            angle = rb.rotation;
+            Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+            rb.AddForce(dir * thrust * enginesHP);
+        }
+
+        if (Input.GetKey(KeyCode.S))        //  ----------  BACKWARD
+        {
+            angle = rb.rotation;
+            Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+            rb.AddForce(-dir * thrust * enginesHP);
+        }
+
+        if (Input.GetKey(KeyCode.A))        //  ----------  TURN LEFT
+        {
+            if (rb.angularVelocity < maxAngularVel)
+                rb.AddTorque(torque * enginesHP);
+        }
+
+        if (Input.GetKey(KeyCode.D))        //  ----------  TURN RIGHT
+        {
+            if (rb.angularVelocity > -maxAngularVel)
+                rb.AddTorque(-torque * enginesHP);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            updateDataInit();
+        }
+    }
+
+    void initializePlayer()
+    {
+        Debug.Log("Updates before setting camera: " + updateCount);
+        LinkToOwner();
+        camSet = true;
+        gameObject.layer = 8; //localShip
+        updateDataInit();
+        
+    }
     
-    private void updateNamesInit()
+    private void updateDataInit()
     {
         //Debug.Log(gameObject.name + " is requesting playernames from server");
 
-        ownerObjRef.GetComponent<PlayerConnection>().UpdateNamesInit();
+        ownerObjRef.GetComponent<PlayerConnection>().updateDataInit();
     }
+
+    
 
     private void LinkToOwner()
     {

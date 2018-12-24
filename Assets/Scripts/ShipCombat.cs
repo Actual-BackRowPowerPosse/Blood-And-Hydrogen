@@ -73,11 +73,8 @@ public class ShipCombat : NetworkBehaviour
     {
         //Debug.Log("Adding " + num + " hp to player");
         currentHP += num;
-        float maxAsFloat = (float)maxHP;
-        float HP_Percent = currentHP / maxAsFloat;
-        //hBarScriptRef.UpdateHealthBar(subtractPercent);
         RpcSetHealth(currentHP);
-        RpcUpdateHealthBar(HP_Percent);
+        RpcUpdateHealthBar(currentHP);
     }
 
 
@@ -85,20 +82,18 @@ public class ShipCombat : NetworkBehaviour
     //  RPC's
 
     [ClientRpc]
-    void RpcUpdateHealthBar(float subtraction)
+    public void RpcUpdateHealthBar(float newHP)
     {
-        hBarScriptRef.UpdateHealthBar(subtraction);
+        float maxAsFloat = (float)maxHP;
+        float HP_Percent = newHP / maxAsFloat;
+        hBarScriptRef.UpdateHealthBar(HP_Percent);
     }
 
-    [ClientRpc]
-    void RpcBulletShot()
-    {
-
-    }
+    
 
 
     [ClientRpc]
-    void RpcSetHealth(short num)
+    public void RpcSetHealth(short num)
     {
         currentHP = num;
         //healthBarRef.transform.localScale = new Vector3(0.7f, 1.0f);
