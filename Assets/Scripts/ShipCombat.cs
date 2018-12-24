@@ -51,7 +51,11 @@ public class ShipCombat : NetworkBehaviour
         CmdShootBullet();
     }
 
-    
+    public void hurtMe(short damage)
+    {
+        Debug.Log("Damage taken: " + damage);
+        CmdAddHealth((short)(-damage));
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     //  COMMANDS

@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4257748963296302}
   - component: {fileID: 212556869510376478}
   - component: {fileID: 114097512813956440}
-  - component: {fileID: 114374406791063232}
   - component: {fileID: 114221237610850902}
   - component: {fileID: 50097097203366920}
   - component: {fileID: 60335212797473268}
@@ -74,7 +73,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 6200000, guid: 3c45de31664e172429a4e46e3f2ffb2e, type: 2}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -141,27 +140,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletLifeTime: 100
   bulletThrust: 35
---- !u!114 &114374406791063232
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1426713088251006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
-  m_SendInterval: 0.1
-  m_SyncRotationAxis: 7
-  m_RotationSyncCompression: 0
-  m_SyncSpin: 0
-  m_MovementTheshold: 0.001
-  m_VelocityThreshold: 0.0001
-  m_SnapThreshold: 5
-  m_InterpolateRotation: 1
-  m_InterpolateMovement: 1
+  damage: 5
+  impactDetonateDelay: 10
+  explosionPrefab: {fileID: 1714715424429300, guid: a7518053ec57c10419640f883536f58d,
+    type: 2}
 --- !u!212 &212556869510376478
 SpriteRenderer:
   m_ObjectHideFlags: 1
