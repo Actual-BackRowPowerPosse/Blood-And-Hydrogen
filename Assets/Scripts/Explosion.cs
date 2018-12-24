@@ -14,7 +14,8 @@ public class Explosion : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Debug.Log("Explosion created");
+        //Debug.Log("Explosion created");
+        
     }
 
     // Update is called once per frame
@@ -45,5 +46,10 @@ public class Explosion : MonoBehaviour
         startTick = true;
         growBy = new Vector3(transform.localScale.x / timer, transform.localScale.y / timer);
         transform.localScale -= transform.localScale; //shrink to nothing
+
+        // set random rotation
+        Vector3 euler = transform.eulerAngles;
+        euler.z = Random.Range(0f, 360f);
+        transform.eulerAngles = euler;
     }
 }

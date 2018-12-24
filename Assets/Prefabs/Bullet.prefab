@@ -142,7 +142,7 @@ MonoBehaviour:
   bulletThrust: 35
   damage: 5
   impactDetonateDelay: 10
-  explosionPrefab: {fileID: 1714715424429300, guid: a7518053ec57c10419640f883536f58d,
+  explosionPrefab: {fileID: 1741776813406048, guid: dbd6006261c11c3498907f611572b526,
     type: 2}
 --- !u!212 &212556869510376478
 SpriteRenderer:
