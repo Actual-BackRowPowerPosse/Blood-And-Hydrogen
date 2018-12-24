@@ -15,7 +15,7 @@ public class PlayerConnection : NetworkBehaviour {
     private bool nameInitialized = false;
 
 
-    public string pname = "player";
+    public string textBoxString = "player";
 
     //public Text nameLabelRef;
     
@@ -28,7 +28,7 @@ public class PlayerConnection : NetworkBehaviour {
     void OnGUI()
     {
        // if(isLocalPlayer)
-            pname = GUI.TextField(new Rect(50, boxHeight, 100, 30), pname);
+            textBoxString = GUI.TextField(new Rect(50, boxHeight, 100, 30), textBoxString);
     }
 
 	// Use this for initialization
@@ -78,8 +78,8 @@ public class PlayerConnection : NetworkBehaviour {
 
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
-                Debug.Log("value of pname: " + pname);
-                gameObject.name = pname;
+                Debug.Log("value of pname: " + textBoxString);
+                CmdChangePlayerShipName(textBoxString);
                 PlayerShipObj.GetComponent<ShipMovement>().setDisplayName(gameObject.name);
             }
 
