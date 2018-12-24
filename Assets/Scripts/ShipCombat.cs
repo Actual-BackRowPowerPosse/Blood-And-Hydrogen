@@ -40,7 +40,7 @@ public class ShipCombat : NetworkBehaviour
 
     float calculateHealth()
     {
-        return 0.75f;
+        return (currentHP / maxHP);
     }
 
     void ShootBullet()
