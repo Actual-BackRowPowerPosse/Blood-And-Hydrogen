@@ -141,7 +141,7 @@ MonoBehaviour:
   bulletLifeTime: 100
   bulletThrust: 35
   damage: 5
-  impactDetonateDelay: 10
+  impactDetonateDelay: 30
   explosionPrefab: {fileID: 1741776813406048, guid: dbd6006261c11c3498907f611572b526,
     type: 2}
 --- !u!212 &212556869510376478

@@ -28,28 +28,6 @@ public class Bullet : NetworkBehaviour {
 
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        collision = true;
-        Debug.Log("Bullet Impact triggered");
-        if(other.tag == "PlayerShip" && other.gameObject.layer == 8) //  is a playership in layer 8 (localShips)
-        {
-            ShipCombat target = other.gameObject.GetComponent<ShipCombat>();
-            target.hurtMe(damage);
-
-        }
-        //Destroy(gameObject);
-        if (hasAuthority)
-        {
-            CmdSetDelay(impactDetonateDelay);
-        }
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        gameObject.GetComponent<PolygonCollider2D>().enabled = false;
-
-        
-        explode(5);
-
-    }
 
     private void FixedUpdate()
     {
@@ -80,6 +58,43 @@ public class Bullet : NetworkBehaviour {
         rbRef.AddForce(dir * bulletThrust);
     }
 
+    //  when this collides with any other Collider2D
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        collision = true;
+        Debug.Log("Bullet Impact triggered");
+        if (other.tag == "PlayerShip" && other.gameObject.layer == 10) //  is a playership in layer 10 (networkShips)
+        {
+            //ShipCombat target = other.gameObject.GetComponent<ShipCombat>();
+            //target.hurtMe(damage);
+            // get Id of impacted target
+            uint targetId = other.gameObject.GetComponent<ShipCombat>().netId.Value;
+            CmdExplodeOnTarget(targetId);  // request server to deal damage to opponent via this ID
+            
+
+        }
+
+        CmdSetDelay(impactDetonateDelay); //  tell other clients to detonate this object
+
+    }
+
+    [Command]
+    void CmdExplodeOnTarget(uint netId)
+    {
+        GameObject[] allShips = GameObject.FindGameObjectsWithTag("PlayerShip");
+        bool shipFound = false;
+        for(int i = 0; i < allShips.Length && !shipFound; i++)
+        {
+            ShipCombat combatRef = allShips[i].GetComponent<ShipCombat>();
+            if(combatRef.netId.Value == netId)
+            {
+                combatRef.hurtMe(damage);
+            }
+
+
+        }
+    }
+
     private void explode(short duration)
     {
         GameObject explosion = Instantiate(explosionPrefab);
@@ -91,14 +106,15 @@ public class Bullet : NetworkBehaviour {
     {
         bulletLifeTime = delay;
 
-        // no collision registered, and this is a NetworkProjectile -- therefore, is a network-to-network collision
-        if (!collision && gameObject.layer == 12) 
-        {
-            explode(5);
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            gameObject.GetComponent<PolygonCollider2D>().enabled = false;
+        //Debug.Log("collision flag: " + collision + ", layer should be 12: " + gameObject.layer);
 
-        }
+        // no collision registered, and this is a NetworkProjectile -- therefore, is a network-to-network collision
+        
+        explode(5);
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        gameObject.GetComponent<PolygonCollider2D>().enabled = false;
+
+        
         RpcSetDelay(delay);
     }
 
@@ -106,12 +122,11 @@ public class Bullet : NetworkBehaviour {
     void RpcSetDelay(short delay)
     {
         // no collision registered, and this is a NetworkProjectile -- therefore, is a network-to-network collision
-        if (!collision && gameObject.layer == 12)
-        {
-            explode(5);
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            gameObject.GetComponent<PolygonCollider2D>().enabled = false;
-        }
+        
+        explode(5);
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        gameObject.GetComponent<PolygonCollider2D>().enabled = false;
+        
         bulletLifeTime = delay;
     }
 
