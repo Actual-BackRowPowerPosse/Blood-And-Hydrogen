@@ -169,8 +169,56 @@ public class PlayerConnection : NetworkBehaviour {
     void shootTurret()
     {
         Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - PlayerShipObj.transform.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        CmdShootTurret(angle);
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float shipAngle = PlayerShipObj.transform.rotation.eulerAngles.z;
+
+
+
+        float angleDiff = targetAngle - shipAngle;
+
+        
+
+        float absDiff = Mathf.Abs(angleDiff);
+
+        if(absDiff > 180)
+        {
+            absDiff -= 360;
+            absDiff = Mathf.Abs(absDiff);
+
+            if(angleDiff > 180)
+            {
+                angleDiff -= 360;
+            }
+            if(angleDiff < -180)
+            {
+                angleDiff += 360;
+            }
+
+        }
+
+        Debug.Log("Target angle: " + targetAngle + ", shipAngle: " + shipAngle + ", angleDiff: " + angleDiff + ", absDiff: " + absDiff);
+
+        if(absDiff < 45 && angleDiff > 0)
+        {
+            targetAngle = shipAngle + 45;
+        }
+        else if (absDiff < 45 && angleDiff < 0)
+        {
+            targetAngle = shipAngle - 45;
+        }
+        else if (absDiff > 135 && angleDiff > 0)
+        {
+            targetAngle = shipAngle + 135;
+        }
+        else if (absDiff > 135 && angleDiff < 0)
+        {
+            targetAngle = shipAngle - 135;
+        }
+
+
+
+        CmdShootTurret(targetAngle);
+
     }
 
     [Command]
