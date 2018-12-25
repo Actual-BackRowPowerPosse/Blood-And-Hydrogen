@@ -71,6 +71,11 @@ public class PlayerConnection : NetworkBehaviour {
                 CmdShootBullet();
             }
 
+            if(Input.GetMouseButtonDown(0) && PlayerShipObj != null)
+            {
+                shootTurret();
+            }
+
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 Debug.Log("value of pname: " + textBoxString);
@@ -91,6 +96,7 @@ public class PlayerConnection : NetworkBehaviour {
         }
 
     }
+
 
     public void LinkCameraToObj( GameObject obj)
     {
@@ -159,7 +165,27 @@ public class PlayerConnection : NetworkBehaviour {
     /////////////////////////////////////////////  COMMANDS
     //  Initiated by a client, executed on Server side
 
-    
+
+    void shootTurret()
+    {
+        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - PlayerShipObj.transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        CmdShootTurret(angle);
+    }
+
+    [Command]
+    void CmdShootTurret(float angle)
+    {
+        GameObject bulletObj = Instantiate(bulletPrefab);
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        bulletObj.transform.position = PlayerShipObj.transform.position;
+        bulletObj.transform.rotation = rotation;
+        NetworkServer.SpawnWithClientAuthority(bulletObj, connectionToClient);
+
+    }
+
+
     [Command]
     void CmdShootBullet()
     {
