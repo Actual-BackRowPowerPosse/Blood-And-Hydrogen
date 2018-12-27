@@ -16,6 +16,7 @@ public class ShipMovement : NetworkBehaviour {
 
     public GameObject childUI;
 
+
     public Text nameLabelRef;
 
     private GameObject ownerObjRef;
@@ -106,6 +107,7 @@ public class ShipMovement : NetworkBehaviour {
         camSet = true;
         gameObject.layer = 8; //localShip
         updateDataInit();
+        gameObject.GetComponent<ShipCombat>().ownerRef = ownerObjRef;
         
     }
     

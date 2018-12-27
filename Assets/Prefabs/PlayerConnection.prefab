@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4288896019465054}
   - component: {fileID: 114369919809712220}
   - component: {fileID: 114327127719960110}
+  - component: {fileID: 114137399305383822}
   m_Layer: 0
   m_Name: PlayerConnection
   m_TagString: Player
@@ -41,6 +42,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114137399305383822
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1425608444725268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f65854e722b16045b23ec3d2dc5233a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 1426713088251006, guid: 00b401bdb8f2f9e4eb3fb5da58910d63,
+    type: 2}
+  explosionPrefab: {fileID: 1741776813406048, guid: dbd6006261c11c3498907f611572b526,
+    type: 2}
 --- !u!114 &114327127719960110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -58,6 +74,7 @@ MonoBehaviour:
     type: 2}
   camRef: {fileID: 0}
   PlayerShipObj: {fileID: 0}
+  textBoxString: player
   playerShipCount: 0
 --- !u!114 &114369919809712220
 MonoBehaviour:

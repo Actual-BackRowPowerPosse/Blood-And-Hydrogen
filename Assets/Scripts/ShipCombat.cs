@@ -6,9 +6,14 @@ using UnityEngine.Networking;
 public class ShipCombat : NetworkBehaviour
 {
 
-    public GameObject bulletRef;
+   // public GameObject bulletRef;
 
     public GameObject healthBarRef;
+
+    public GameObject laserSightRef;
+
+    public GameObject bulletPrefab;
+
     public HealthBar hBarScriptRef;
 
     public GameObject explosionPrefab;
@@ -17,6 +22,7 @@ public class ShipCombat : NetworkBehaviour
     public short currentHP;
 
 
+    public GameObject ownerRef;
     
 
 	// Use this for initialization
@@ -36,7 +42,18 @@ public class ShipCombat : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 //Debug.Log("Shooting bullet");
-                //ShootBullet();
+                ShootBullet();
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                shootTurret();
+            }
+
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                toggleLaser();
             }
 
             if (Input.GetKeyDown(KeyCode.T))
@@ -54,6 +71,82 @@ public class ShipCombat : NetworkBehaviour
         }
 		
 	}
+
+    void toggleLaser()
+    {
+        SpriteRenderer laserImageRef = laserSightRef.GetComponent<SpriteRenderer>();
+        laserImageRef.enabled = !laserImageRef.enabled;
+        
+    }
+
+    void ShootBullet()
+    {
+
+        ownerRef.GetComponent<ItemSpawner>().shootBullet();
+    }
+
+    void shootTurret()
+    {
+        //  Get angle of shot
+        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float shipAngle = transform.rotation.eulerAngles.z;
+
+
+        //  relative bearing of shot
+        float angleDiff = targetAngle - shipAngle;
+
+
+
+        float absDiff = Mathf.Abs(angleDiff);
+
+        if (absDiff > 180)
+        {
+            absDiff -= 360;
+            absDiff = Mathf.Abs(absDiff);
+
+            if (angleDiff > 180)
+            {
+                angleDiff -= 360;
+            }
+            if (angleDiff < -180)
+            {
+                angleDiff += 360;
+            }
+
+        }
+
+        //Debug.Log("Target angle: " + targetAngle + ", shipAngle: " + shipAngle + ", angleDiff: " + angleDiff + ", absDiff: " + absDiff);
+
+        if (absDiff < 45 && angleDiff > 0)
+        {
+            targetAngle = shipAngle + 45;
+        }
+        else if (absDiff < 45 && angleDiff < 0)
+        {
+            targetAngle = shipAngle - 45;
+        }
+        else if (absDiff > 135 && angleDiff > 0)
+        {
+            targetAngle = shipAngle + 135;
+        }
+        else if (absDiff > 135 && angleDiff < 0)
+        {
+            targetAngle = shipAngle - 135;
+        }
+
+        ownerRef.GetComponent<ItemSpawner>().shootTurret(targetAngle);
+
+    }
+
+    public void hurtMe(short damage)
+    {
+        Debug.Log("Damage taken: " + damage);
+        CmdAddHealth((short)(-damage));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //  Player Explosion networking
 
     public void explode(short duration)
     {
@@ -77,31 +170,13 @@ public class ShipCombat : NetworkBehaviour
         Destroy(gameObject);
     }
 
-    void ShootBullet()
-    {
-        CmdShootBullet();
-    }
 
-    public void hurtMe(short damage)
-    {
-        Debug.Log("Damage taken: " + damage);
-        CmdAddHealth((short)(-damage));
-    }
+
+
+   
 
     ///////////////////////////////////////////////////////////////////////////////
     //  COMMANDS
-
-    [Command]
-    void CmdShootBullet()
-    {
-        GameObject bulletObj = Instantiate(bulletRef);
-        bulletObj.transform.position = gameObject.transform.position; // set object to same position as 'THIS' object
-        bulletObj.transform.rotation = gameObject.transform.rotation;
-        bulletObj.GetComponent<Rigidbody2D>().velocity = gameObject.GetComponent<Rigidbody2D>().velocity; // add ship's initial velocity to bullet
-
-        
-        NetworkServer.SpawnWithClientAuthority(bulletObj, connectionToClient);
-    }
 
     [Command]
     void CmdAddHealth(short num)

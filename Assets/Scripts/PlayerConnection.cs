@@ -6,7 +6,6 @@ using UnityEngine.Networking;
 public class PlayerConnection : NetworkBehaviour {
 
     public GameObject PlayerObjPrefab;
-    public GameObject bulletPrefab;
 
     public GameObject camRef;
 
@@ -64,16 +63,6 @@ public class PlayerConnection : NetworkBehaviour {
                 string n = "Player (" + Random.Range(0, 100) + ")";
                 CmdChangePlayerShipName(n);
                 PlayerShipObj.GetComponent<ShipMovement>().setDisplayName(n);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                CmdShootBullet();
-            }
-
-            if(Input.GetMouseButtonDown(0) && PlayerShipObj != null)
-            {
-                shootTurret();
             }
 
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
@@ -166,82 +155,6 @@ public class PlayerConnection : NetworkBehaviour {
     //  Initiated by a client, executed on Server side
 
 
-    void shootTurret()
-    {
-        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - PlayerShipObj.transform.position;
-        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        float shipAngle = PlayerShipObj.transform.rotation.eulerAngles.z;
-
-
-
-        float angleDiff = targetAngle - shipAngle;
-
-        
-
-        float absDiff = Mathf.Abs(angleDiff);
-
-        if(absDiff > 180)
-        {
-            absDiff -= 360;
-            absDiff = Mathf.Abs(absDiff);
-
-            if(angleDiff > 180)
-            {
-                angleDiff -= 360;
-            }
-            if(angleDiff < -180)
-            {
-                angleDiff += 360;
-            }
-
-        }
-
-        Debug.Log("Target angle: " + targetAngle + ", shipAngle: " + shipAngle + ", angleDiff: " + angleDiff + ", absDiff: " + absDiff);
-
-        if(absDiff < 45 && angleDiff > 0)
-        {
-            targetAngle = shipAngle + 45;
-        }
-        else if (absDiff < 45 && angleDiff < 0)
-        {
-            targetAngle = shipAngle - 45;
-        }
-        else if (absDiff > 135 && angleDiff > 0)
-        {
-            targetAngle = shipAngle + 135;
-        }
-        else if (absDiff > 135 && angleDiff < 0)
-        {
-            targetAngle = shipAngle - 135;
-        }
-
-
-
-        CmdShootTurret(targetAngle);
-
-    }
-
-    [Command]
-    void CmdShootTurret(float angle)
-    {
-        GameObject bulletObj = Instantiate(bulletPrefab);
-        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
-        bulletObj.transform.position = PlayerShipObj.transform.position;
-        bulletObj.transform.rotation = rotation;
-        NetworkServer.SpawnWithClientAuthority(bulletObj, connectionToClient);
-
-    }
-
-
-    [Command]
-    void CmdShootBullet()
-    {
-        GameObject bulletObj = Instantiate(bulletPrefab);
-        bulletObj.transform.position = PlayerShipObj.transform.position;
-        bulletObj.transform.rotation = PlayerShipObj.transform.rotation;
-        NetworkServer.SpawnWithClientAuthority(bulletObj, connectionToClient);
-    }
 
     [Command]
     void CmdSpawnMyShip()
