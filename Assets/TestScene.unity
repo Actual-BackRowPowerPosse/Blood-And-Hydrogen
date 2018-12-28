@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 5422521}
   m_Layer: 0
   m_Name: Obstacle (5)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -294,7 +294,7 @@ GameObject:
   - component: {fileID: 155985842}
   m_Layer: 0
   m_Name: Obstacle (4)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -420,7 +420,7 @@ GameObject:
   - component: {fileID: 274825152}
   m_Layer: 0
   m_Name: Obstacle (10)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -717,6 +717,16 @@ Prefab:
       propertyPath: interiorRef
       value: 
       objectReference: {fileID: 1385579949}
+    - target: {fileID: 114029147586212534, guid: 9b3371cb2c279f645962748a3e73c6b4,
+        type: 2}
+      propertyPath: pilotControlEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114775524746253384, guid: 9b3371cb2c279f645962748a3e73c6b4,
+        type: 2}
+      propertyPath: gunnerControlEnabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9b3371cb2c279f645962748a3e73c6b4, type: 2}
   m_IsPrefabParent: 0
@@ -738,7 +748,7 @@ GameObject:
   - component: {fileID: 704919501}
   m_Layer: 0
   m_Name: Obstacle (2)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -956,7 +966,7 @@ GameObject:
   - component: {fileID: 774349699}
   m_Layer: 0
   m_Name: Obstacle (6)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1157,6 +1167,16 @@ Prefab:
       propertyPath: shipId
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114029147586212534, guid: 9b3371cb2c279f645962748a3e73c6b4,
+        type: 2}
+      propertyPath: pilotControlEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114775524746253384, guid: 9b3371cb2c279f645962748a3e73c6b4,
+        type: 2}
+      propertyPath: gunnerControlEnabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9b3371cb2c279f645962748a3e73c6b4, type: 2}
   m_IsPrefabParent: 0
@@ -1173,7 +1193,7 @@ GameObject:
   - component: {fileID: 891338271}
   m_Layer: 0
   m_Name: Obstacle (7)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1299,7 +1319,7 @@ GameObject:
   - component: {fileID: 967616713}
   m_Layer: 0
   m_Name: Obstacle (3)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1425,7 +1445,7 @@ GameObject:
   - component: {fileID: 1060040778}
   m_Layer: 0
   m_Name: Obstacle (1)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1747,7 +1767,7 @@ GameObject:
   - component: {fileID: 1512413893}
   m_Layer: 0
   m_Name: Obstacle
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1873,7 +1893,7 @@ GameObject:
   - component: {fileID: 1662866982}
   m_Layer: 0
   m_Name: Obstacle (12)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1999,7 +2019,7 @@ GameObject:
   - component: {fileID: 1664386443}
   m_Layer: 0
   m_Name: Obstacle (11)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2187,7 +2207,7 @@ GameObject:
   - component: {fileID: 1920957711}
   m_Layer: 0
   m_Name: Obstacle (8)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2313,7 +2333,7 @@ GameObject:
   - component: {fileID: 2077925423}
   m_Layer: 0
   m_Name: Obstacle (9)
-  m_TagString: Untagged
+  m_TagString: MapObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

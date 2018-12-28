@@ -93,8 +93,10 @@ public class ShipMovement : NetworkBehaviour {
                 initializePlayer();
             }
 
-            processInputs();
+            
         }
+
+        processInputs();
 
 
     }
@@ -155,12 +157,10 @@ public class ShipMovement : NetworkBehaviour {
                 if (rb.angularVelocity > -maxAngularVel)
                     rb.AddTorque(-torque * enginesHP);
             }
-
         }
-
-        
-
     }
+
+    
 
     void setShipRenderers(bool doRender)
     {

@@ -8,6 +8,8 @@ TagManager:
   - Projectile
   - PlayerCrew
   - ShipInterior
+  - Map
+  - MapObjects
   layers:
   - Default
   - TransparentFX

@@ -8,15 +8,24 @@ public class PlayerCrew : NetworkBehaviour {
 
     public GameObject playerConnRef;
     public GameObject playerShipRef;
+    public GameObject shipInteriorRef;
 
+    private GameObject camRef;
+
+    private Rigidbody2D rbRef;
     
     public uint ownerId;
     public int myShipId;
     bool playerOnShip = false;
 
+    public bool interiorControlsEnabled = false;
+    public float moveSpeed;
+
 	// Use this for initialization
 	void Start () {
         //setOwnerRef(ownerId);
+        rbRef = GetComponent<Rigidbody2D>();
+        camRef = GameObject.Find("MainCamera");
 	}
 
     /////////////////////////////////////////////////////////////////////////////
@@ -37,7 +46,8 @@ public class PlayerCrew : NetworkBehaviour {
     void putPlayerOntoShip()  // assumes references already properly set
     {
         // move player onto ship's interior
-        transform.position = playerShipRef.GetComponent<ShipMovement>().interiorRef.transform.position;
+        Vector3 shipPosition = playerShipRef.GetComponent<ShipMovement>().interiorRef.transform.position;
+        transform.position = new Vector3(shipPosition.x, shipPosition.y, transform.position.z);
 
         // if this is the local player
         // ...set rendering to interior
@@ -134,13 +144,15 @@ public class PlayerCrew : NetworkBehaviour {
             if(shipRef.shipId == myShipNum)
             {
                 playerShipRef = allShips[i];
+                shipInteriorRef = allShips[i].GetComponent<ShipMovement>().interiorRef;
             }
         }
 
     }
 
     
-
+    /////////////////////////////////////////////////////////////////////////////////
+    //  UPDATE AND PLAYER CONTROL
     // Update is called once per frame
     void Update () {
         if(!playerOnShip && playerConnRef!= null && playerShipRef != null)
@@ -149,26 +161,119 @@ public class PlayerCrew : NetworkBehaviour {
             putPlayerOntoShip(); // references are good to go, put player onto ship on THIS computer
 
         }
+
+        if (hasAuthority)
+        {
+
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                showInterior();
+            }
+
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                showExterior();
+            }
+
+
+            processMovementControls();
+
+
+        }
+
+
         
+    }
+
+    void processMovementControls()
+    {
+        if (interiorControlsEnabled)
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                rbRef.velocity = new Vector2(rbRef.velocity.x, moveSpeed);
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                rbRef.velocity = new Vector2(rbRef.velocity.x, -moveSpeed);
+            }
+            else
+            {
+                rbRef.velocity = new Vector2(rbRef.velocity.x, 0.0f);
+            }
+
+
+            if (Input.GetKey(KeyCode.A))
+            {
+                rbRef.velocity = new Vector2(-moveSpeed, rbRef.velocity.y);
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                rbRef.velocity = new Vector2(moveSpeed, rbRef.velocity.y);
+            }
+            else
+            {
+                rbRef.velocity = new Vector2(0.0f, rbRef.velocity.y);
+            }
+        }
     }
 
 
     void showExterior() //---- HOW TO HANDLE WHEN SHIP IS DEAD (i.e., when playerShipRef is null)
     {
-        // Disable interior controls
-        // Disable interior rendering
-        //  EXTRA -- somehow slow down interior data updates? reduce client and network load somehow?
+        // Disable exterior controls
+        setExteriorControls(true);
+        // disable exterior rendering
+        setExteriorRendering(true);
+        //  EXTRA -- somehow slow down interior dat updates? reduce client and network load somehow?
 
-        // Enable exterior controls
-        // Enable exterior rendering
-        //  EXTRA -- somehow speed up data updates to normal capacity? (if it was slowed down before)
 
-        // Set new camera behavior
+        // enable interior controls
+        setInteriorControls(false);
+        // enable interior rendering
+        setInteriorRendering(false);
+
+
+        // move camera to ship
+        setExteriorCamera();
     }
 
     void showInterior()
     {
         Debug.Log("Switching to interior mode");
+
+        // Disable exterior controls
+        setExteriorControls(false);
+        // disable exterior rendering
+        setExteriorRendering(false);
+        //  EXTRA -- somehow slow down interior dat updates? reduce client and network load somehow?
+
+
+        // enable interior controls
+        setInteriorControls(true);
+        // enable interior rendering
+        setInteriorRendering(true);
+
+
+        // move camera to ship
+        setInteriorCamera();
+
+    }
+
+    void setAllRenderersFromParentTag(string tag, bool doEnable)
+    {
+        //  find all game objects with tag
+        GameObject[] allWithTag = GameObject.FindGameObjectsWithTag(tag);
+        for (int i = 0; i < allWithTag.Length; i++)  // loop through each object found
+        {
+            // find all renderers within this object
+            Renderer[] renderers = allWithTag[i].GetComponentsInChildren<Renderer>();
+            for (int j = 0; j < renderers.Length; j++) // loop through all of those renderers
+            {
+                renderers[j].enabled = doEnable; // set this renderer's enabled status
+            }
+
+        }
     }
 
 
@@ -178,37 +283,58 @@ public class PlayerCrew : NetworkBehaviour {
 
     void setInteriorControls(bool enabled)
     {
-
+        interiorControlsEnabled = enabled;
     }
 
     void setInteriorRendering(bool enabled)
     {
-        //  access all interior objects, set render
+        //  set rendering on all PlayerCrew objects
+        setAllRenderersFromParentTag("PlayerCrew", enabled);
+
+        //  set rendering on all ShipInterior objects
+        setAllRenderersFromParentTag("ShipInterior", enabled);
+
+
+
     }
+
+    
 
     void setInteriorCamera()
     {
-
+        CameraMovement camScriptRef = camRef.GetComponent<CameraMovement>();
+        camScriptRef.snapToObject(shipInteriorRef);
+        camScriptRef.lookAtObject(shipInteriorRef);
+        
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
     //  EXTERIOR
 
-    void setExteriorControls(bool enabled)
+    void setExteriorControls(bool enabled)  
     {
-
+        // assumes attempting pilot control access
+        // assumes no other players trying to control ship (if multiple, won't fail, but will have competing forces acting on ship)
+        playerShipRef.GetComponent<ShipMovement>().pilotControlEnabled = enabled;
     }
 
     void setExteriorRendering(bool enabled)
     {
         //  access all exterior objects, set render
+        setAllRenderersFromParentTag("PlayerShip", enabled);
+        setAllRenderersFromParentTag("Map", enabled);
+        setAllRenderersFromParentTag("MapObjects", enabled);
     }
 
     void setExteriorCamera()
     {
-
+        CameraMovement camScriptRef = camRef.GetComponent<CameraMovement>();
+        camScriptRef.snapToObject(playerShipRef);
+        camScriptRef.lookAtObject(playerShipRef);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //  SHIP DEATH
 
     void shipDeath()
     {

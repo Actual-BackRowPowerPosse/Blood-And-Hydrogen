@@ -64,7 +64,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!60 &60282130020551676
 PolygonCollider2D:
   m_ObjectHideFlags: 1
@@ -107,8 +107,8 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
-  m_SendInterval: 0.25
+  m_TransformSyncMode: 2
+  m_SendInterval: 0.14285715
   m_SyncRotationAxis: 7
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
@@ -130,8 +130,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerConnRef: {fileID: 0}
   playerShipRef: {fileID: 0}
+  shipInteriorRef: {fileID: 0}
   ownerId: 0
   myShipId: 0
+  interiorControlsEnabled: 1
+  moveSpeed: 2
 --- !u!114 &114715634843805860
 MonoBehaviour:
   m_ObjectHideFlags: 1
