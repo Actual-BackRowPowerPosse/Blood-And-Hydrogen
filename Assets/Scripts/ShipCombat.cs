@@ -20,6 +20,7 @@ public class ShipCombat : NetworkBehaviour
 
     public short maxHP;
     public short currentHP;
+    public bool gunnerControlEnabled = false;
 
 
     public GameObject ownerRef;
@@ -37,7 +38,7 @@ public class ShipCombat : NetworkBehaviour
         
 
 
-        if (hasAuthority)
+        if (hasAuthority && gunnerControlEnabled && false)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -47,6 +48,7 @@ public class ShipCombat : NetworkBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
+                Debug.Log("attempting to shoot turret");
                 shootTurret();
             }
 

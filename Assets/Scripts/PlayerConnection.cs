@@ -9,18 +9,25 @@ public class PlayerConnection : NetworkBehaviour {
 
     public GameObject camRef;
 
+    public GameObject playerCrewPrefab;
+    public GameObject myCrew;
+
+
     public GameObject PlayerShipObj;
+
+    public GameObject shipSelectionMenuPrefab;
+    private GameObject shipSelectMenu;
+    
 
     private bool nameInitialized = false;
 
+    [SyncVar]
+    private short myShipNum;
 
     public string textBoxString = "player";
 
     //public Text nameLabelRef;
     
-
-    [SyncVar]
-    public short playerShipCount = 0;
 
     private int boxHeight = 0;
 
@@ -33,24 +40,89 @@ public class PlayerConnection : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
 
+        setTextBoxUI();
+        Debug.Log("PlayerConnection's start() method began");
+        //  Open ship selection menu
         if (isLocalPlayer)
         {
-            
+            Debug.Log("We are local player");
+            showShipSelectionMenu();
+        }
+		
+	}
 
 
+    //////////////////////////////////////////////////////////////////////////////
+    //  SELECTING A SHIP
+
+
+    void showShipSelectionMenu()
+    {
+        Debug.Log("Attempting to show selection menu");
+        shipSelectMenu = Instantiate(shipSelectionMenuPrefab);
+        shipSelectMenu.GetComponent<JoinShipMenu>().ownerRef = gameObject;
+    }
+
+    //  called by button
+    public void createPlayerOnShip(int shipNum)
+    {
+        CmdCreatePlayerOnShip(shipNum);
+    }
+
+
+    [Command]
+    void CmdCreatePlayerOnShip(int shipNum)
+    {
+        string findShip = shipName(shipNum);
+        myShipNum = (short)shipNum;
+
+        Debug.Log("Joining ship: " + findShip);
+
+        //  Spawn this client's playerCrew on all clients
+        //  Set crew on the correct ship
+        //  set back and forth references between owner and crew on ALL clients
+        myCrew = Instantiate(playerCrewPrefab);
+        PlayerCrew crewScriptRef = myCrew.GetComponent<PlayerCrew>();
+        //crewScriptRef.ownerId = netId.Value;
+        //crewScriptRef.myShipId = shipNum;
+
+        //myCrew.GetComponent<PlayerCrew>().setOwnerRef(netId.Value);
+        NetworkServer.SpawnWithClientAuthority(myCrew, connectionToClient); // give authority over spawned object to the client that called this command
+
+        crewScriptRef.setPlayerReferences(netId.Value, shipNum);
+    }
+
+    
+
+    
+
+
+
+    string shipName(int shipNum)
+    {
+        string findShip = "noship";
+        if (shipNum == 0)
+        {
+            findShip = "BlueShip";
+        }
+        else if (shipNum == 1)
+        {
+            findShip = "RedShip";
+        }
+        return findShip;
+    }
+
+
+    void setTextBoxUI()
+    {
+        if (isLocalPlayer)
+        {
             boxHeight = Screen.height - 50;
-
-
-            //Debug.Log("Spawning ship: " + PlayerShipObj);
-            // Set camera to look at ship
-            //LinkCameraToObj(PlayerShipObj);
-
 
         }
         else
             boxHeight = Screen.height + 100;
-		
-	}
+    }
 
     // Update is called once per frame
     void Update()
@@ -74,12 +146,13 @@ public class PlayerConnection : NetworkBehaviour {
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-                if(PlayerShipObj != null)
-                {
-                    ShipCombat combatRef = PlayerShipObj.GetComponent<ShipCombat>();
-                    combatRef.explode(50); // explosion duration of 50 fixedupdates
-                }
-                CmdSpawnMyShip();
+                //if(PlayerShipObj != null)
+                //{
+                //    ShipCombat combatRef = PlayerShipObj.GetComponent<ShipCombat>();
+                //    combatRef.explode(50); // explosion duration of 50 fixedupdates
+                //}
+                //CmdSpawnMyShip();
+
             }
 
         }
@@ -87,15 +160,12 @@ public class PlayerConnection : NetworkBehaviour {
     }
 
 
-    public void LinkCameraToObj( GameObject obj)
-    {
-        if (isLocalPlayer)
-        {
-            camRef = GameObject.Find("MainCamera");
-            camRef.GetComponent<CameraMovement>().lookAtObject(obj); // set camera to look at argument object
-            
-        }
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    //  PLAYER LOADS IN
+
+
+
+    
 	
 	
 
@@ -114,23 +184,28 @@ public class PlayerConnection : NetworkBehaviour {
     [Command]
     void CmdUpdateDataInit()
     {
-        //Debug.Log("Server beginning to process request...");
+        Debug.Log("Server beginning to process request...");
 
         GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
 
         for(int i = 0; i < allPlayers.Length; i++)
         {
+
             // update names
             PlayerConnection playerRef = allPlayers[i].GetComponent<PlayerConnection>();
             ShipMovement playerShipRef = playerRef.PlayerShipObj.GetComponent<ShipMovement>();
-            playerRef.RpcUpdateNamesInit(playerRef.name);
-            playerShipRef.setDisplayName(playerRef.name);
+            if (playerShipRef != null)
+            {
 
-            //  Update HP
-            ShipCombat playerCombatRef = playerRef.PlayerShipObj.GetComponent<ShipCombat>();
-            Debug.Log("Player " + allPlayers[i].name + "'s hp on server: " + playerCombatRef.currentHP);
-            playerCombatRef.RpcSetHealth(playerCombatRef.currentHP);
-            playerCombatRef.RpcUpdateHealthBar(playerCombatRef.currentHP);
+                playerRef.RpcUpdateNamesInit(playerRef.name);
+                playerShipRef.setDisplayName(playerRef.name);
+
+                //  Update HP
+                ShipCombat playerCombatRef = playerRef.PlayerShipObj.GetComponent<ShipCombat>();
+                Debug.Log("Player " + allPlayers[i].name + "'s hp on server: " + playerCombatRef.currentHP);
+                playerCombatRef.RpcSetHealth(playerCombatRef.currentHP);
+                playerCombatRef.RpcUpdateHealthBar(playerCombatRef.currentHP);
+            }
 
             //  Add more 'paragraphs' as more data types get added
 
@@ -160,7 +235,6 @@ public class PlayerConnection : NetworkBehaviour {
     void CmdSpawnMyShip()
     {
 
-        playerShipCount++; // only the server will record how many playerShips it has spawned
         GameObject go = Instantiate(PlayerObjPrefab);
         PlayerShipObj = go;
         NetworkServer.SpawnWithClientAuthority(go, connectionToClient);

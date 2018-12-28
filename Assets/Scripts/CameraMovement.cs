@@ -94,12 +94,17 @@ public class CameraMovement : MonoBehaviour {
 
     public void lookAtObject(GameObject obj)
     {
-        Debug.Log("Setting camera to look at " + obj);
+        Debug.Log("Setting camera to look at " + obj + ", at coordinates: (" + obj.transform.position.x + "," + obj.transform.position.y + ")");
         objRef = obj;
         
         rbRef = objRef.GetComponent<Rigidbody2D>();
 
         hasSet = true;
+    }
+
+    public void snapToObject(GameObject obj)
+    {
+        gameObject.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, gameObject.transform.position.z);
     }
 
     

@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 60992092095517514}
   - component: {fileID: 60429138984714704}
   - component: {fileID: 60990817433309332}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Map2 Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,8 +58,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1817827529764286}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.8, y: -58.6, z: 1}
-  m_LocalScale: {x: 13.421375, y: 13.39264, z: 1.1318033}
+  m_LocalPosition: {x: 61.1, y: 60.3, z: 1}
+  m_LocalScale: {x: 18, y: 18, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0

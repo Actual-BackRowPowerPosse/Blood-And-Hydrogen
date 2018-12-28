@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PlayerShip
   - Projectile
+  - PlayerCrew
+  - ShipInterior
   layers:
   - Default
   - TransparentFX

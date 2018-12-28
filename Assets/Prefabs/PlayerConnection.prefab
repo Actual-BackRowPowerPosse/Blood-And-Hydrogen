@@ -70,12 +70,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerObjPrefab: {fileID: 1152183659351184, guid: 9b3371cb2c279f645962748a3e73c6b4,
     type: 2}
-  bulletPrefab: {fileID: 1426713088251006, guid: 00b401bdb8f2f9e4eb3fb5da58910d63,
-    type: 2}
   camRef: {fileID: 0}
+  playerCrewPrefab: {fileID: 1832892620401398, guid: 96813b12030626649920e944b8eecb06,
+    type: 2}
+  myCrew: {fileID: 0}
   PlayerShipObj: {fileID: 0}
+  shipSelectionMenuPrefab: {fileID: 1872946622811158, guid: 21cdfb85574dca142a42571228f92c23,
+    type: 2}
   textBoxString: player
-  playerShipCount: 0
 --- !u!114 &114369919809712220
 MonoBehaviour:
   m_ObjectHideFlags: 1

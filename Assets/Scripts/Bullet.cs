@@ -59,6 +59,7 @@ public class Bullet : NetworkBehaviour {
     }
 
     //  when this collides with any other Collider2D
+    //  ONLY CLIENT WILL REGISTER HIS PROJECTILE'S COLLISIONS, due to the way the layers are set
     private void OnTriggerEnter2D(Collider2D other)
     {
         collision = true;
