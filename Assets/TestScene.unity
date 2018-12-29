@@ -909,6 +909,21 @@ Prefab:
       propertyPath: shipExteriorRef
       value: 
       objectReference: {fileID: 1317797013}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 85b6d9792ce51cd4f8046aa4e0d8e908, type: 2}
   m_IsPrefabParent: 0
@@ -1746,6 +1761,21 @@ Prefab:
       propertyPath: shipExteriorRef
       value: 
       objectReference: {fileID: 689585252}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.r
+      value: 0.9632353
+      objectReference: {fileID: 0}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 0.347048
+      objectReference: {fileID: 0}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 0.347048
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 85b6d9792ce51cd4f8046aa4e0d8e908, type: 2}
   m_IsPrefabParent: 0

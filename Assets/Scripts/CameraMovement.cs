@@ -20,7 +20,8 @@ public class CameraMovement : MonoBehaviour {
     private float prevY = 0.0f;
     private float prevSize = 0.0f;
 
-    private bool hasSet = false;
+    private bool dynamicFollowEnabled = false;
+    private bool simpleFollowEnabled = false;
 
     // Use this for initialization
     void Start () {
@@ -35,50 +36,17 @@ public class CameraMovement : MonoBehaviour {
     {
         if (rbRef == null)
         {
-            hasSet = false;
+            dynamicFollowEnabled = false;
         }
 
-        if (hasSet)
+        if (dynamicFollowEnabled)
         {
-            // Debug.Log("Camera has been set");
-            //Debug.Log(objRef + "'s current position is: (" + objRef.transform.position.x + ", " + objRef.transform.position.y + ")");
+            dynamicFollow();
+        }
 
-
-            ////////////////////////////////////////////////////////////////////
-            // Enlarging camera based off of speed
-
-            // calculate new size of camera based off of speed
-            float newSize = camSize + Mathf.Pow((speedModCoeff * rbRef.velocity.magnitude), speedModPow);
-
-            // prevent camera from 'jumping' -- size will only change by small amount per update
-            camRef.orthographicSize += clampFloat(newSize - prevSize, -camMaxZoomSpeed, camMaxZoomSpeed);
-
-            // save current size of camera, so next update will remember
-            prevSize = camRef.orthographicSize;
-
-            /////////////////////////////////////////////////////////////////////
-            //  Translating camera to player, and adjusting camera forward to show ahead of player
-
-            //  Create vector representing a translation from camera's current position to player
-            Vector2 transformVect = new Vector2((rbRef.position.x - transform.position.x), rbRef.position.y - transform.position.y);
-
-
-
-            //  Move camera position to show what is ahead of player
-            transformVect.x += rbRef.velocity.x * speedTranslateCoeff;
-            transformVect.y += rbRef.velocity.y * speedTranslateCoeff / 1.8f; // divided to compensate for short heighth of screen
-
-
-            // Keep camera from 'jumping' -- will only move at maximum a certain distance each update
-            transformVect.x = clampFloat((transform.position.x + transformVect.x) - prevX, -camMaxTranslateSpeed, camMaxTranslateSpeed);
-            transformVect.y = clampFloat((transform.position.y + transformVect.y) - prevY, -camMaxTranslateSpeed, camMaxTranslateSpeed);
-
-            //  Actually move camera, pass in vector
-            transform.Translate(transformVect);
-
-            //  save current position for next update() call to use
-            prevX = transform.position.x;
-            prevY = transform.position.y;
+        if (simpleFollowEnabled)
+        {
+            simpleFollow();
         }
     }
 
@@ -92,14 +60,72 @@ public class CameraMovement : MonoBehaviour {
 
     }
 
+    void simpleFollow()
+    {
+        //  just continually snap camera to followed object
+        snapToObject(objRef);
+    }
+
+    void dynamicFollow()
+    {
+        // Debug.Log("Camera has been set");
+        //Debug.Log(objRef + "'s current position is: (" + objRef.transform.position.x + ", " + objRef.transform.position.y + ")");
+
+
+        ////////////////////////////////////////////////////////////////////
+        // Enlarging camera based off of speed
+
+        // calculate new size of camera based off of speed
+        float newSize = camSize + Mathf.Pow((speedModCoeff * rbRef.velocity.magnitude), speedModPow);
+
+        // prevent camera from 'jumping' -- size will only change by small amount per update
+        camRef.orthographicSize += clampFloat(newSize - prevSize, -camMaxZoomSpeed, camMaxZoomSpeed);
+
+        // save current size of camera, so next update will remember
+        prevSize = camRef.orthographicSize;
+
+        /////////////////////////////////////////////////////////////////////
+        //  Translating camera to player, and adjusting camera forward to show ahead of player
+
+        //  Create vector representing a translation from camera's current position to player
+        Vector2 transformVect = new Vector2((rbRef.position.x - transform.position.x), rbRef.position.y - transform.position.y);
+
+
+
+        //  Move camera position to show what is ahead of player
+        transformVect.x += rbRef.velocity.x * speedTranslateCoeff;
+        transformVect.y += rbRef.velocity.y * speedTranslateCoeff / 1.8f; // divided to compensate for short heighth of screen
+
+
+        // Keep camera from 'jumping' -- will only move at maximum a certain distance each update
+        transformVect.x = clampFloat((transform.position.x + transformVect.x) - prevX, -camMaxTranslateSpeed, camMaxTranslateSpeed);
+        transformVect.y = clampFloat((transform.position.y + transformVect.y) - prevY, -camMaxTranslateSpeed, camMaxTranslateSpeed);
+
+        //  Actually move camera, pass in vector
+        transform.Translate(transformVect);
+
+        //  save current position for next update() call to use
+        prevX = transform.position.x;
+        prevY = transform.position.y;
+    }
+
+    public void simpleLookAtObject(GameObject obj)
+    {
+        dynamicFollowEnabled = false;
+        objRef = obj;
+        rbRef = objRef.GetComponent<Rigidbody2D>();
+        simpleFollowEnabled = true;
+    }
+
     public void lookAtObject(GameObject obj)
     {
+        simpleFollowEnabled = false;
         Debug.Log("Setting camera to look at " + obj + ", at coordinates: (" + obj.transform.position.x + "," + obj.transform.position.y + ")");
         objRef = obj;
         
         rbRef = objRef.GetComponent<Rigidbody2D>();
 
-        hasSet = true;
+        dynamicFollowEnabled = true;
     }
 
     public void snapToObject(GameObject obj)

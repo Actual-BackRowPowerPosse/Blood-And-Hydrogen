@@ -164,6 +164,7 @@ public class PlayerCrew : NetworkBehaviour {
 
         if (hasAuthority)
         {
+            correctShipVacancy();
 
             if (Input.GetKeyDown(KeyCode.G))
             {
@@ -181,8 +182,19 @@ public class PlayerCrew : NetworkBehaviour {
 
         }
 
+        
 
         
+        
+    }
+
+    void correctShipVacancy()
+    {
+        ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
+        if(shipScriptRef.pilotControlEnabled && !shipScriptRef.pilotSeatOccupied)
+        {
+            shipScriptRef.setPilotSeatOccupied(true);
+        }
     }
 
     void processMovementControls()
@@ -216,6 +228,8 @@ public class PlayerCrew : NetworkBehaviour {
                 rbRef.velocity = new Vector2(0.0f, rbRef.velocity.y);
             }
         }
+        else
+            rbRef.velocity = new Vector2(0.0f, 0.0f);
     }
 
 
@@ -304,7 +318,7 @@ public class PlayerCrew : NetworkBehaviour {
     {
         CameraMovement camScriptRef = camRef.GetComponent<CameraMovement>();
         camScriptRef.snapToObject(shipInteriorRef);
-        camScriptRef.lookAtObject(shipInteriorRef);
+        camScriptRef.simpleLookAtObject(shipInteriorRef);
         
     }
 
@@ -315,7 +329,26 @@ public class PlayerCrew : NetworkBehaviour {
     {
         // assumes attempting pilot control access
         // assumes no other players trying to control ship (if multiple, won't fail, but will have competing forces acting on ship)
-        playerShipRef.GetComponent<ShipMovement>().pilotControlEnabled = enabled;
+        ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
+
+        
+
+        if (enabled) // if attempting to assume pilot control
+        {
+            if (!shipScriptRef.pilotSeatOccupied) // if pilot seat is NOT occupied
+            {
+                CmdSetShipAuthority();
+                shipScriptRef.pilotControlEnabled = true;
+            }
+        }
+        else  // if attempting to LEAVE external perspective
+        {
+            if (shipScriptRef.pilotControlEnabled)  // check if we HAD control
+            {
+                shipScriptRef.setPilotSeatOccupied(false);  // broadcast that pilot seat is vacant
+                shipScriptRef.pilotControlEnabled = false;  // disable control on THIS computer
+            }
+        }
     }
 
     void setExteriorRendering(bool enabled)
@@ -328,10 +361,72 @@ public class PlayerCrew : NetworkBehaviour {
 
     void setExteriorCamera()
     {
+        ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
         CameraMovement camScriptRef = camRef.GetComponent<CameraMovement>();
         camScriptRef.snapToObject(playerShipRef);
-        camScriptRef.lookAtObject(playerShipRef);
+
+        if (shipScriptRef.pilotControlEnabled)
+        {
+            camScriptRef.lookAtObject(playerShipRef);
+        }
+        else
+        {
+            camScriptRef.simpleLookAtObject(playerShipRef);
+        }
     }
+
+    //  Remove client authority from any user who has authority
+    //  then, give authority to the owner of this PlayerCrew object
+    [Command]
+    void CmdSetShipAuthority()
+    {
+        ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
+
+        NetworkIdentity newPlayerID = playerConnRef.GetComponent<NetworkIdentity>();
+        NetworkIdentity shipID = playerShipRef.GetComponent<NetworkIdentity>();
+        NetworkConnection otherShipOwner = shipID.clientAuthorityOwner;
+
+        if (otherShipOwner != newPlayerID.connectionToClient)
+        {
+            if (otherShipOwner != null)
+            {
+                shipID.RemoveClientAuthority(otherShipOwner);
+            }
+            shipID.AssignClientAuthority(newPlayerID.connectionToClient);
+            shipScriptRef.setPilotSeatOccupied(true);
+        }
+
+    }
+
+    
+
+    //[Command]
+    //void CmdGiveShipAuthority()
+    //{
+    //    ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
+    //    //shipScriptRef.pilotSeatOccupied = true;
+    //    shipScriptRef.setPilotSeatOccupied(true);
+
+    //    // Client that called this command will have authority over ship
+    //    NetworkIdentity playerID = playerConnRef.GetComponent<NetworkIdentity>();
+    //    playerShipRef.GetComponent<NetworkIdentity>().AssignClientAuthority(playerID.connectionToClient);
+    //}
+
+    //[Command]
+    //void CmdDisableShipAuthority()
+    //{
+       
+    //    ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
+
+    //    if (shipScriptRef.pilotControlEnabled)
+    //    {
+    //        // shipScriptRef.pilotSeatOccupied = false;
+    //        shipScriptRef.setPilotSeatOccupied(false);
+
+    //        NetworkIdentity playerID = playerConnRef.GetComponent<NetworkIdentity>();
+    //        playerShipRef.GetComponent<NetworkIdentity>().RemoveClientAuthority(playerID.connectionToClient);
+    //    }
+    //}
 
     ////////////////////////////////////////////////////////////////////////////
     //  SHIP DEATH

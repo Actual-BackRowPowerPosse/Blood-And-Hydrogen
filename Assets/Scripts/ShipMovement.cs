@@ -38,12 +38,30 @@ public class ShipMovement : NetworkBehaviour {
     private short updateCount = 0;
 
     
+    public bool pilotSeatOccupied; // should be networked via the setPilotSeatOccupied command
 
+    ///////////////////////////////////////////////////////////////////////////
+    //  PILOT SEAT VACANCY NETWORKING MANAGEMENT
 
-    public bool getShipVisibility()
+    public void setPilotSeatOccupied(bool isOccupied)
     {
-        return gameObject.GetComponent<SpriteRenderer>().enabled;
+        CmdSetPilotSeatOccupied(isOccupied);
     }
+
+    [Command]
+    void CmdSetPilotSeatOccupied(bool isOccupied)
+    {
+        pilotSeatOccupied = isOccupied;
+        RpcSetPilotSeatOccupied(isOccupied);
+    }
+
+    [ClientRpc]
+    void RpcSetPilotSeatOccupied(bool isOccupied)
+    {
+        pilotSeatOccupied = isOccupied;
+    }
+    //------------------------------------------------------------------------
+    
 
     // Use this for initialization
     void Start () {
@@ -75,6 +93,8 @@ public class ShipMovement : NetworkBehaviour {
                 setShipRenderers(shipShown);
             }
         }
+
+        
     }
 	
 	// Update is called once per frame
@@ -127,6 +147,7 @@ public class ShipMovement : NetworkBehaviour {
 
     }
 
+    
     void processInputs()
     {
         if (pilotControlEnabled)
@@ -137,6 +158,7 @@ public class ShipMovement : NetworkBehaviour {
                 angle = rb.rotation;
                 Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
                 rb.AddForce(dir * thrust * enginesHP);
+
             }
 
             if (Input.GetKey(KeyCode.S))        //  ----------  BACKWARD
@@ -159,6 +181,32 @@ public class ShipMovement : NetworkBehaviour {
             }
         }
     }
+
+    
+    //void ApplyShipThrust(bool thrustForward)
+    //{
+    //    float angle;
+    //    angle = rb.rotation;
+    //    Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+    //    if (!thrustForward)
+    //        dir *= -1; // send thrust backwards
+    //    rb.AddForce(dir * thrust * enginesHP);
+    //}
+
+    //void ApplyShipTorque(bool isClockwise)
+    //{
+
+    //    if (isClockwise)
+    //    {
+    //        if (rb.angularVelocity > -maxAngularVel)
+    //            rb.AddTorque(-torque * enginesHP);
+    //    }
+    //    else // turn counterclockwise
+    //    {
+    //        if (rb.angularVelocity < maxAngularVel)
+    //            rb.AddTorque(torque * enginesHP);
+    //    }
+    //}
 
     
 
@@ -290,5 +338,10 @@ public class ShipMovement : NetworkBehaviour {
     void CmdDestroyShip()
     {
         Destroy(gameObject);
+    }
+
+    public bool getShipVisibility()
+    {
+        return gameObject.GetComponent<SpriteRenderer>().enabled;
     }
 }
