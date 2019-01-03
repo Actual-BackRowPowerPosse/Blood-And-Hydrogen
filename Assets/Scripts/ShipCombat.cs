@@ -23,13 +23,14 @@ public class ShipCombat : NetworkBehaviour
     public bool gunnerControlEnabled = false;
 
 
-    public GameObject ownerRef;
+    public GameObject currentGunnerRef;
     
 
 	// Use this for initialization
 	void Start () {
         currentHP = maxHP;
         hBarScriptRef = healthBarRef.GetComponent<HealthBar>();
+        CmdBroadcastDataAllShips();  // update all ships according to server's version 
 	}
 	
 	// Update is called once per frame
@@ -38,7 +39,7 @@ public class ShipCombat : NetworkBehaviour
         
 
 
-        if (hasAuthority && gunnerControlEnabled && false)
+        if (gunnerControlEnabled)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -74,6 +75,29 @@ public class ShipCombat : NetworkBehaviour
 		
 	}
 
+
+    //  From server, broadcasts all data from every ship object
+    //  ...so, every ship object for every client will be updated according...
+    //  ...to the version on the server
+    [Command]
+    void CmdBroadcastDataAllShips()
+    {
+
+        GameObject[] allShips = GameObject.FindGameObjectsWithTag("PlayerShip");
+
+        //  loop through all ship objects, send data
+        for(int i = 0; i < allShips.Length; i++)
+        {
+            //  broadcast shipHP for this ship
+            ShipCombat shipCombatScriptRef = allShips[i].GetComponent<ShipCombat>();
+            shipCombatScriptRef.CmdSetHealth(shipCombatScriptRef.currentHP);
+
+            // add more 'paragraphs' for each data value you want to propogate
+        }
+
+    }
+
+
     void toggleLaser()
     {
         SpriteRenderer laserImageRef = laserSightRef.GetComponent<SpriteRenderer>();
@@ -84,7 +108,7 @@ public class ShipCombat : NetworkBehaviour
     void ShootBullet()
     {
 
-        ownerRef.GetComponent<ItemSpawner>().shootBullet();
+        currentGunnerRef.GetComponent<ItemSpawner>().shootBullet();
     }
 
     void shootTurret()
@@ -137,7 +161,7 @@ public class ShipCombat : NetworkBehaviour
             targetAngle = shipAngle - 135;
         }
 
-        ownerRef.GetComponent<ItemSpawner>().shootTurret(targetAngle);
+        currentGunnerRef.GetComponent<ItemSpawner>().shootTurret(targetAngle);
 
     }
 
@@ -179,6 +203,14 @@ public class ShipCombat : NetworkBehaviour
 
     ///////////////////////////////////////////////////////////////////////////////
     //  COMMANDS
+
+    [Command]
+    void CmdSetHealth(short num)
+    {
+        currentHP = num;
+        RpcSetHealth(currentHP);
+        RpcUpdateHealthBar(currentHP);
+    }
 
     [Command]
     void CmdAddHealth(short num)

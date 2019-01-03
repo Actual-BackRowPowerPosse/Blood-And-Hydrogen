@@ -6,6 +6,7 @@ public class JoinShipMenu : MonoBehaviour {
 
 
     private GameObject camRef;
+
     public GameObject ownerRef;
 
     private bool killMenu = false;
@@ -14,7 +15,6 @@ public class JoinShipMenu : MonoBehaviour {
 	void Start () {
         camRef = GameObject.Find("MainCamera");
         camRef.GetComponent<CameraMovement>().snapToObject(gameObject);
-        
 	}
 
 
@@ -28,9 +28,9 @@ public class JoinShipMenu : MonoBehaviour {
 	}
 
 
-    public void doThing(int num)
+    public void selectShipNum(int num)
     {
-        Debug.Log("thing did: " + num);
+        Debug.Log("Ship selected: " + num);
         ownerRef.GetComponent<PlayerConnection>().createPlayerOnShip(num);
         killMenu = true;
     }

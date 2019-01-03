@@ -251,7 +251,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114776794080736648}
-        m_MethodName: doThing
+        m_MethodName: selectShipNum
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -319,7 +319,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114776794080736648}
-        m_MethodName: doThing
+        m_MethodName: selectShipNum
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

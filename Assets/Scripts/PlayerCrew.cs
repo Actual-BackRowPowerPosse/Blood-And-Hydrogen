@@ -28,13 +28,52 @@ public class PlayerCrew : NetworkBehaviour {
         camRef = GameObject.Find("MainCamera");
 	}
 
+
+    /////////////////////////////////////////////////////////////////////////////////
+    //  UPDATE AND PLAYER CONTROL
+    // Update is called once per frame
+    void Update()
+    {
+
+        //  if (player NOT on ship AND playerConnRef isn't set AND playerShipRef isn't set
+        if (!playerOnShip && playerConnRef != null && playerShipRef != null)
+        {
+            CmdBroadcastDataFromAllCrew(); // server will broadcast all data from all playerCrew objects to all other clients
+            putPlayerOntoShip(); // references are good to go, put player onto ship on THIS computer
+            if (hasAuthority)
+                showInterior();
+
+        }
+
+        if (hasAuthority)
+        {
+
+
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                showInterior();
+            }
+
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                showExterior();
+            }
+
+
+            processMovementControls();
+
+
+        }
+
+    }
+
     /////////////////////////////////////////////////////////////////////////////
     //  NETWORKING INITIALIZATION
 
     public void setPlayerReferences(uint ownerIdNum, int shipIdNum)
     {
-        CmdSetOwnerRef(ownerIdNum);     //  will propogate to all existing clients
-        CmdSetShipRef(shipIdNum);       //  will propogate to all existing clients
+        CmdSetOwnerRef(ownerIdNum);     //  To server, then will propogate to all existing clients
+        CmdSetShipRef(shipIdNum);       //  To server, will propogate to all existing clients
 
 
         //  POSSIBLE ERROR: by the time this method is executed, references might not be set. Consider having this method wait or triggered on client when both are set.
@@ -53,11 +92,13 @@ public class PlayerCrew : NetworkBehaviour {
         // ...set rendering to interior
         // ...set controls to interior
         // ...set camera to interior
-        showInterior();
+        // showInterior();
         playerOnShip = true;
     }
 
     //  Update all clients according to their serverside version (data that isn't regularly updated)
+    //   - back and forth references between playerCrew object and ship/playerConnection objects
+    //   - status of his ship's pilot seat vacancy
     [Command]
     void CmdBroadcastDataFromAllCrew()
     {
@@ -66,6 +107,14 @@ public class PlayerCrew : NetworkBehaviour {
         for(int i = 0; i < allCrew.Length; i++)
         {
             // access this PlayerCrew's data from server, propogate to all clients
+
+            //  broadcast references again
+            PlayerCrew currentCrewScriptRef = allCrew[i].GetComponent<PlayerCrew>();
+            currentCrewScriptRef.setPlayerReferences(currentCrewScriptRef.ownerId, currentCrewScriptRef.myShipId);
+
+            // broadcast some ship info
+            ShipMovement shipScriptRef = currentCrewScriptRef.playerShipRef.GetComponent<ShipMovement>();
+            shipScriptRef.setPilotSeatOccupied(shipScriptRef.pilotSeatOccupied);
         }
 
     }
@@ -97,7 +146,8 @@ public class PlayerCrew : NetworkBehaviour {
         setOwnerRef(ownerIdNum); // set reference on THIS computer
     }
 
-
+    //  simply sets back-and-forth references between this crew and his owner
+    //  ...via being given a NetID, and searching through all players for this netID
     public void setOwnerRef(uint ownerIdNum)
     {
         ownerId = ownerIdNum;
@@ -131,6 +181,8 @@ public class PlayerCrew : NetworkBehaviour {
         setShipRef(myShipNum); // set reference on THIS computer
     }
 
+    //  Sets back and forth references between this crew and his ship
+    //   via being given a netID, and searches for ship with this ID
     public void setShipRef(int myShipNum)
     {
 
@@ -151,51 +203,7 @@ public class PlayerCrew : NetworkBehaviour {
     }
 
     
-    /////////////////////////////////////////////////////////////////////////////////
-    //  UPDATE AND PLAYER CONTROL
-    // Update is called once per frame
-    void Update () {
-        if(!playerOnShip && playerConnRef!= null && playerShipRef != null)
-        {
-            CmdBroadcastDataFromAllCrew(); // update OTHER crew objects on this computer according to server (only data that isn't regularly broadcast)
-            putPlayerOntoShip(); // references are good to go, put player onto ship on THIS computer
-
-        }
-
-        if (hasAuthority)
-        {
-            correctShipVacancy();
-
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                showInterior();
-            }
-
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                showExterior();
-            }
-
-
-            processMovementControls();
-
-
-        }
-
-        
-
-        
-        
-    }
-
-    void correctShipVacancy()
-    {
-        ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
-        if(shipScriptRef.pilotControlEnabled && !shipScriptRef.pilotSeatOccupied)
-        {
-            shipScriptRef.setPilotSeatOccupied(true);
-        }
-    }
+   
 
     void processMovementControls()
     {
@@ -236,7 +244,7 @@ public class PlayerCrew : NetworkBehaviour {
     void showExterior() //---- HOW TO HANDLE WHEN SHIP IS DEAD (i.e., when playerShipRef is null)
     {
         // Disable exterior controls
-        setExteriorControls(true);
+        setExteriorPilotControls(true);
         // disable exterior rendering
         setExteriorRendering(true);
         //  EXTRA -- somehow slow down interior dat updates? reduce client and network load somehow?
@@ -254,10 +262,9 @@ public class PlayerCrew : NetworkBehaviour {
 
     void showInterior()
     {
-        Debug.Log("Switching to interior mode");
 
         // Disable exterior controls
-        setExteriorControls(false);
+        setExteriorPilotControls(false);
         // disable exterior rendering
         setExteriorRendering(false);
         //  EXTRA -- somehow slow down interior dat updates? reduce client and network load somehow?
@@ -325,31 +332,34 @@ public class PlayerCrew : NetworkBehaviour {
     //////////////////////////////////////////////////////////////////////////////////////
     //  EXTERIOR
 
-    void setExteriorControls(bool enabled)  
+    // Entering (true) or leaving (false) pilot seat
+    void setExteriorPilotControls(bool enabled)  
     {
         // assumes attempting pilot control access
-        // assumes no other players trying to control ship (if multiple, won't fail, but will have competing forces acting on ship)
         ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
 
-        
+       // Debug.Log("Attempting to enter pilot seat?: " + enabled);
 
         if (enabled) // if attempting to assume pilot control
         {
-            if (!shipScriptRef.pilotSeatOccupied) // if pilot seat is NOT occupied
-            {
-                CmdSetShipAuthority();
-                shipScriptRef.pilotControlEnabled = true;
-            }
+
+            //Debug.Log("Yes, attempting to enter pilot seat...");
+
+            CmdRequestPilotAuthority();
         }
         else  // if attempting to LEAVE external perspective
         {
+           // Debug.Log("No, attempting to leave pilot seat");
             if (shipScriptRef.pilotControlEnabled)  // check if we HAD control
             {
+               // Debug.Log("We HAD control of pilot seat, now we're setting pilot seat occupied to FALSE");
                 shipScriptRef.setPilotSeatOccupied(false);  // broadcast that pilot seat is vacant
-                shipScriptRef.pilotControlEnabled = false;  // disable control on THIS computer
             }
+            shipScriptRef.pilotControlEnabled = false;  // disable control on THIS computer
         }
     }
+
+
 
     void setExteriorRendering(bool enabled)
     {
@@ -375,58 +385,63 @@ public class PlayerCrew : NetworkBehaviour {
         }
     }
 
+    //  This player (by netID) attempts to take over pilot seat
+    //  Server-side check if pilot seat is vacant
     //  Remove client authority from any user who has authority
     //  then, give authority to the owner of this PlayerCrew object
     [Command]
-    void CmdSetShipAuthority()
+    void CmdRequestPilotAuthority()
     {
+        
         ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
 
-        NetworkIdentity newPlayerID = playerConnRef.GetComponent<NetworkIdentity>();
-        NetworkIdentity shipID = playerShipRef.GetComponent<NetworkIdentity>();
-        NetworkConnection otherShipOwner = shipID.clientAuthorityOwner;
+        //Debug.Log("Requesting pilot authority. pilotSeatOccupied is: " + shipScriptRef.pilotSeatOccupied);
 
-        if (otherShipOwner != newPlayerID.connectionToClient)
+        if (shipScriptRef.pilotSeatOccupied == false) // if, on serverside, pilot seat is NOT occupied
         {
-            if (otherShipOwner != null)
+            // pilot seat is vacant, give this player the pilot seat
+            //Debug.Log("pilotSeatOccupied is false, therefore we are giving requesting player the pilot seat authority");
+            NetworkIdentity newPlayerID = playerConnRef.GetComponent<NetworkIdentity>();
+            NetworkIdentity shipID = playerShipRef.GetComponent<NetworkIdentity>();
+            NetworkConnection otherShipOwner = shipID.clientAuthorityOwner;
+
+            if (otherShipOwner != newPlayerID.connectionToClient)  //  if this player is not already set to own the ship
             {
-                shipID.RemoveClientAuthority(otherShipOwner);
+               // Debug.Log("We are not the current owner of this pilot seat, so we will receive pilot seat authority");
+                if (otherShipOwner != null)  //  if the ship actually DOES have any owner at all
+                {
+                    //Debug.Log("there actually was a different owner, so we are removing his authority");
+                    shipID.RemoveClientAuthority(otherShipOwner);
+                }
+                shipID.AssignClientAuthority(newPlayerID.connectionToClient);  //  Give ownership to the requesting client
+                
             }
-            shipID.AssignClientAuthority(newPlayerID.connectionToClient);
-            shipScriptRef.setPilotSeatOccupied(true);
+            //else
+            //{
+            //    Debug.Log("We are already the owner of the ship. Doing nothing");
+            //}
+            shipScriptRef.setPilotSeatOccupied(true);  // communicate to all clients that pilot seat is now occupied
+            RpcReceivePilotSeat();  // on proper client's computer, their ship will have pilot controls enabled
         }
 
     }
 
-    
+    //  will broadcast to this object on all computers
+    //  only enable ship controls on the computer client that owns this object
+    [ClientRpc]
+    void RpcReceivePilotSeat()
+    {
 
-    //[Command]
-    //void CmdGiveShipAuthority()
-    //{
-    //    ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
-    //    //shipScriptRef.pilotSeatOccupied = true;
-    //    shipScriptRef.setPilotSeatOccupied(true);
+        if (hasAuthority) // check that this computer owns this object
+        {
 
-    //    // Client that called this command will have authority over ship
-    //    NetworkIdentity playerID = playerConnRef.GetComponent<NetworkIdentity>();
-    //    playerShipRef.GetComponent<NetworkIdentity>().AssignClientAuthority(playerID.connectionToClient);
-    //}
+            //Debug.Log("Receiving pilot seat..");
+            ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
+            shipScriptRef.pilotControlEnabled = true; // this computer will be allowed to move ship
 
-    //[Command]
-    //void CmdDisableShipAuthority()
-    //{
-       
-    //    ShipMovement shipScriptRef = playerShipRef.GetComponent<ShipMovement>();
-
-    //    if (shipScriptRef.pilotControlEnabled)
-    //    {
-    //        // shipScriptRef.pilotSeatOccupied = false;
-    //        shipScriptRef.setPilotSeatOccupied(false);
-
-    //        NetworkIdentity playerID = playerConnRef.GetComponent<NetworkIdentity>();
-    //        playerShipRef.GetComponent<NetworkIdentity>().RemoveClientAuthority(playerID.connectionToClient);
-    //    }
-    //}
+            setExteriorCamera();
+        }
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     //  SHIP DEATH

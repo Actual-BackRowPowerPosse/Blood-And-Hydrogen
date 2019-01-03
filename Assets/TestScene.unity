@@ -909,20 +909,9 @@ Prefab:
       propertyPath: shipExteriorRef
       value: 
       objectReference: {fileID: 1317797013}
-    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
-        type: 2}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
-        type: 2}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
-        type: 2}
-      propertyPath: m_Color.b
-      value: 1
+    - target: {fileID: 4980769513406578, guid: 85b6d9792ce51cd4f8046aa4e0d8e908, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 85b6d9792ce51cd4f8046aa4e0d8e908, type: 2}
@@ -1583,6 +1572,7 @@ GameObject:
   - component: {fileID: 1104587063}
   - component: {fileID: 1104587062}
   - component: {fileID: 1104587061}
+  - component: {fileID: 1104587064}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -1703,6 +1693,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1104587064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1104587060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a8041bf8288de4483c969ce4f40c44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shipExteriorPrefab: {fileID: 1152183659351184, guid: 9b3371cb2c279f645962748a3e73c6b4,
+    type: 2}
+  shipInteriorPrefab: {fileID: 1273733729061008, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+    type: 2}
+  allShips: []
 --- !u!1 &1317797013 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1152183659351184, guid: 9b3371cb2c279f645962748a3e73c6b4,
@@ -1751,30 +1757,30 @@ Prefab:
       propertyPath: m_Name
       value: RedShipInterior
       objectReference: {fileID: 0}
-    - target: {fileID: 114930895129023842, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
         type: 2}
-      propertyPath: shipId
+      propertyPath: m_Color.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 0.44117647
+      objectReference: {fileID: 0}
+    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 0.44117647
       objectReference: {fileID: 0}
     - target: {fileID: 114930895129023842, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
         type: 2}
       propertyPath: shipExteriorRef
       value: 
       objectReference: {fileID: 689585252}
-    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
+    - target: {fileID: 114930895129023842, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
         type: 2}
-      propertyPath: m_Color.r
-      value: 0.9632353
-      objectReference: {fileID: 0}
-    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
-        type: 2}
-      propertyPath: m_Color.g
-      value: 0.347048
-      objectReference: {fileID: 0}
-    - target: {fileID: 212541158865457872, guid: 85b6d9792ce51cd4f8046aa4e0d8e908,
-        type: 2}
-      propertyPath: m_Color.b
-      value: 0.347048
+      propertyPath: shipId
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 85b6d9792ce51cd4f8046aa4e0d8e908, type: 2}

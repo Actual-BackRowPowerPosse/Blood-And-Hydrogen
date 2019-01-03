@@ -39,8 +39,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1832892620401398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.1270323, y: 2.2312453, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -51.74, y: 31.37, z: 0}
+  m_LocalScale: {x: 0.72994995, y: 0.72994995, z: 0.72994995}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
   ownerId: 0
   myShipId: 0
   interiorControlsEnabled: 1
-  moveSpeed: 2
+  moveSpeed: 4
 --- !u!114 &114715634843805860
 MonoBehaviour:
   m_ObjectHideFlags: 1

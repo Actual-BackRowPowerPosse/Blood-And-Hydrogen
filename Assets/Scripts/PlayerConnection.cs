@@ -17,7 +17,9 @@ public class PlayerConnection : NetworkBehaviour {
 
     public GameObject shipSelectionMenuPrefab;
     private GameObject shipSelectMenu;
-    
+
+
+    public GameObject networkManagerRef;
 
     private bool nameInitialized = false;
 
@@ -42,6 +44,8 @@ public class PlayerConnection : NetworkBehaviour {
 
         setTextBoxUI();
         Debug.Log("PlayerConnection's start() method began");
+
+        networkManagerRef = GameObject.Find("NetworkManager");
         //  Open ship selection menu
         if (isLocalPlayer)
         {
@@ -89,7 +93,7 @@ public class PlayerConnection : NetworkBehaviour {
         //myCrew.GetComponent<PlayerCrew>().setOwnerRef(netId.Value);
         NetworkServer.SpawnWithClientAuthority(myCrew, connectionToClient); // give authority over spawned object to the client that called this command
 
-        crewScriptRef.setPlayerReferences(netId.Value, shipNum);
+        crewScriptRef.setPlayerReferences(netId.Value, shipNum); // current function body is on the server, therefore this line will execute only on server
     }
 
     
@@ -176,43 +180,43 @@ public class PlayerConnection : NetworkBehaviour {
     public void updateDataInit()
     {
         //Debug.Log("Entered client's PlayerConnection request");
-        CmdUpdateDataInit();
+        //CmdUpdateDataInit();
     }
 
     //  When client loads into server, he requests data of all other gameobjects from server
     //  This function loops through every game object ON THE SERVER, and broadcasts data from each one.
-    [Command]
-    void CmdUpdateDataInit()
-    {
-        Debug.Log("Server beginning to process request...");
+    //[Command]
+    //void CmdUpdateDataInit()
+    //{
+    //    Debug.Log("Server beginning to process request...");
 
-        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
+    //    GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
 
-        for(int i = 0; i < allPlayers.Length; i++)
-        {
+    //    for(int i = 0; i < allPlayers.Length; i++)
+    //    {
 
-            // update names
-            PlayerConnection playerRef = allPlayers[i].GetComponent<PlayerConnection>();
-            ShipMovement playerShipRef = playerRef.PlayerShipObj.GetComponent<ShipMovement>();
-            if (playerShipRef != null)
-            {
+    //        // update names
+    //        PlayerConnection playerRef = allPlayers[i].GetComponent<PlayerConnection>();
+    //        ShipMovement playerShipRef = playerRef.PlayerShipObj.GetComponent<ShipMovement>();
+    //        if (playerShipRef != null)
+    //        {
 
-                playerRef.RpcUpdateNamesInit(playerRef.name);
-                playerShipRef.setDisplayName(playerRef.name);
+    //            playerRef.RpcUpdateNamesInit(playerRef.name);
+    //            playerShipRef.setDisplayName(playerRef.name);
 
-                //  Update HP
-                ShipCombat playerCombatRef = playerRef.PlayerShipObj.GetComponent<ShipCombat>();
-                Debug.Log("Player " + allPlayers[i].name + "'s hp on server: " + playerCombatRef.currentHP);
-                playerCombatRef.RpcSetHealth(playerCombatRef.currentHP);
-                playerCombatRef.RpcUpdateHealthBar(playerCombatRef.currentHP);
-            }
+    //            //  Update HP
+    //            ShipCombat playerCombatRef = playerRef.PlayerShipObj.GetComponent<ShipCombat>();
+    //            Debug.Log("Player " + allPlayers[i].name + "'s hp on server: " + playerCombatRef.currentHP);
+    //            playerCombatRef.RpcSetHealth(playerCombatRef.currentHP);
+    //            playerCombatRef.RpcUpdateHealthBar(playerCombatRef.currentHP);
+    //        }
 
-            //  Add more 'paragraphs' as more data types get added
+    //        //  Add more 'paragraphs' as more data types get added
 
-        }
+    //    }
 
-        //RpcUpdateNamesInit(gameObject.name);
-    }
+    //    //RpcUpdateNamesInit(gameObject.name);
+    //}
 
     [ClientRpc]
     void RpcUpdateNamesInit(string name)

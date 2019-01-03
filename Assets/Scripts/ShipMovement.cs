@@ -23,11 +23,13 @@ public class ShipMovement : NetworkBehaviour {
     public Text nameLabelRef;
 
     //  change this to "current pilot"
-    private GameObject ownerObjRef;
+    private GameObject currentPilotRef;
 
     private GameObject camRef;
 
     private Rigidbody2D rb;
+
+    public string displayName;
 
 
     //private bool shipShown = true;  // has a get() method
@@ -51,15 +53,11 @@ public class ShipMovement : NetworkBehaviour {
     [Command]
     void CmdSetPilotSeatOccupied(bool isOccupied)
     {
+        //Debug.Log("on Serverside, Setting pilot seat occupied to: " + isOccupied);
         pilotSeatOccupied = isOccupied;
-        RpcSetPilotSeatOccupied(isOccupied);
     }
 
-    [ClientRpc]
-    void RpcSetPilotSeatOccupied(bool isOccupied)
-    {
-        pilotSeatOccupied = isOccupied;
-    }
+    
     //------------------------------------------------------------------------
     
 
@@ -74,8 +72,7 @@ public class ShipMovement : NetworkBehaviour {
         Quaternion rotation = new Quaternion(0.0f, 0.0f, gameObject.transform.rotation.z, 0.0f);
         childUI.transform.rotation = rotation;
 
-        //  currently, references are "hard-coded" in Unity Editor
-        // linkToInterior(); // assumes shipId's are IMMEDIATELY properly set
+        setDisplayName("DefaultShip");
 
 
     }
@@ -95,6 +92,7 @@ public class ShipMovement : NetworkBehaviour {
         }
 
         
+
     }
 	
 	// Update is called once per frame
@@ -105,22 +103,48 @@ public class ShipMovement : NetworkBehaviour {
         childUI.transform.rotation = rotation;
 
        
-        if (hasAuthority)
-        {
+        //if (hasAuthority)
+        //{
 
-            if (!camSet)
-            {
-                initializePlayer();
-            }
+        //    if (!camSet)
+        //    {
+        //        initializePlayer();
+        //    }
 
             
-        }
+        //}
 
         processInputs();
 
 
     }
 
+    //  From server, broadcasts all data from every ship object
+    //  ...so, every ship object for every client will be updated according...
+    //  ...to its version on the server
+    void CmdUpdateDataAllShips()
+    {
+
+        GameObject[] allShips = GameObject.FindGameObjectsWithTag("PlayerShip");
+
+        // loop through each ship object
+        for(int i = 0; i < allShips.Length; i++)
+        {
+            //  for each ship object, broadcast all data from server
+            ShipMovement shipScriptRef = allShips[i].GetComponent<ShipMovement>();
+
+            //  ship name
+            shipScriptRef.setDisplayName(shipScriptRef.displayName);
+            
+            //  ...add more paragraphs as more data values need to be broadcast
+
+        }
+
+    }
+
+
+    //  Sets back and forth references between this world-map ship object and the interior-view ship object
+    //  searches through all interior objects for the one with matching shipID
     void linkToInterior()
     {
 
@@ -146,6 +170,8 @@ public class ShipMovement : NetworkBehaviour {
         }
 
     }
+
+
 
     
     void processInputs()
@@ -224,20 +250,18 @@ public class ShipMovement : NetworkBehaviour {
     void initializePlayer()
     {
         Debug.Log("Updates before setting camera: " + updateCount);
-        LinkToOwner();
         camSet = true;
         gameObject.layer = 8; //localShip
-        updateDataInit();
-        gameObject.GetComponent<ShipCombat>().ownerRef = ownerObjRef;
+        gameObject.GetComponent<ShipCombat>().currentGunnerRef = currentPilotRef;
         
     }
     
-    private void updateDataInit()
-    {
-        //Debug.Log(gameObject.name + " is requesting playernames from server");
+    //private void updateDataInit()
+    //{
+    //    //Debug.Log(gameObject.name + " is requesting playernames from server");
 
-        ownerObjRef.GetComponent<PlayerConnection>().updateDataInit();
-    }
+    //    currentPilotRef.GetComponent<PlayerConnection>().updateDataInit();
+    //}
 
     public void LinkCameraToObj(GameObject obj)
     {
@@ -251,71 +275,18 @@ public class ShipMovement : NetworkBehaviour {
 
 
 
-    private void LinkToOwner()
-    {
-        //Debug.Log("PlayerShip is attempting to link to its owner");
-
-
-        if (hasAuthority)
-        {
-            //Debug.Log("This playership has authority, attempting link...");♣
-
-            GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
-
-            bool playerFound = false;
-
-            for (int i = 0; i < allPlayers.Length && !playerFound; i++) // loop through every player
-            {
-                PlayerConnection playerObj = allPlayers[i].GetComponent<PlayerConnection>();
-                //Debug.Log("Iteration of search loop: " + i);
-                if (playerObj.isLocalPlayer)
-                {
-                    //Debug.Log("Player Found!");
-                    playerObj.PlayerShipObj = gameObject;  // player object will look at THIS
-
-                    ownerObjRef = allPlayers[i];           // THIS will look at playerobject
-                    LinkCameraToObj(gameObject);
-                    setDisplayName(ownerObjRef.GetComponent<PlayerConnection>().name);
-                    CmdSetLinkOnServer(playerObj.netId.Value);
-                    playerFound = true;
-
-                }
-
-            }
-
-
-
-            // camera look at this object
-        }
-        
-    }
-
-    // --  The Server's computer will have correct references between player and ship
-    [Command]
-    public void CmdSetLinkOnServer(uint netId)
-    {
-        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
-        bool playerFound = false;
-        for(int i = 0; i < allPlayers.Length && !playerFound; i++)
-        {
-            PlayerConnection playerObjRef = allPlayers[i].GetComponent<PlayerConnection>();
-            if(playerObjRef.netId.Value == netId)
-            {
-                playerObjRef.PlayerShipObj = gameObject;
-                ownerObjRef = allPlayers[i];
-            }
-        }
-
-    }
+    
 
     public void setDisplayName(string name)
     {
+        displayName = name;
         CmdSetDisplayName(name);
     }
 
     [Command]
     void CmdSetDisplayName(string name)
     {
+        displayName = name;
         nameLabelRef.GetComponent<Text>().text = name;
         RpcSetDisplayName(name);
     }
@@ -323,6 +294,7 @@ public class ShipMovement : NetworkBehaviour {
     [ClientRpc]
     void RpcSetDisplayName(string name)
     {
+        displayName = name;
         nameLabelRef.GetComponent<Text>().text = name;
     }
     
